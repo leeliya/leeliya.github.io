@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layla El Hajjaji | Data &amp; Backend Engineer</title>
+<meta name="description" content="Final-year engineering student in Big Data &amp; Cloud Computing at ENSET Mohammedia. Data pipelines, backend services and AI systems.">
+<style>
+:root{
+  --bg:#faf8f5; --surface:#ffffff; --text:#1f2328; --muted:#5b636d; --line:#e6e1d9;
+  --accent:#0f766e; --accent-soft:#e0f2ef; --accent-text:#0b5f58; --warn:#d97706;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14171a; --surface:#1b1f23; --text:#e8e6e1; --muted:#9aa3ad; --line:#2a2f35;
+    --accent:#4fd1c5; --accent-soft:#17302d; --accent-text:#7fe3d9; --warn:#fbbf24;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14171a; --surface:#1b1f23; --text:#e8e6e1; --muted:#9aa3ad; --line:#2a2f35;
+  --accent:#4fd1c5; --accent-soft:#17302d; --accent-text:#7fe3d9; --warn:#fbbf24;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+#bar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);
+  transform-origin:0 50%;z-index:20}
+header.nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;height:56px}
+.brand{font-weight:700;letter-spacing:-.01em;color:var(--text);white-space:nowrap}
+.links-nav{display:flex;gap:18px}
+nav{display:flex;gap:18px;align-items:center;font-size:.92rem}
+nav a{color:var(--muted)}
+nav a:hover{color:var(--text);text-decoration:none}
+.tools{display:flex;gap:8px}
+button.pill{font:inherit;font-size:.82rem;border:1px solid var(--line);background:var(--surface);
+  color:var(--text);border-radius:999px;padding:4px 12px;cursor:pointer}
+button.pill:hover{border-color:var(--accent)}
+.hero{padding:64px 0 40px}
+.status{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;color:var(--accent-text);
+  background:var(--accent-soft);border-radius:999px;padding:5px 14px}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);
+  animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}
+  100%{box-shadow:0 0 0 10px transparent}}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);line-height:1.1;letter-spacing:-.03em;margin:20px 0 12px}
+.role{font-size:1.2rem;color:var(--muted);margin:0 0 6px}
+.build{font-size:1.2rem;margin:0 0 18px;min-height:1.7em}
+.build .word{color:var(--accent-text);font-weight:600;display:inline-block;transition:opacity .3s,translate .3s}
+.build .word.out{opacity:0;translate:0 6px}
+.lead{font-size:1.1rem;max-width:62ch;margin:0 0 26px}
+.cta{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-block;border-radius:8px;padding:10px 18px;font-weight:600;font-size:.95rem;
+  border:1px solid var(--accent);background:var(--accent);color:#fff;transition:translate .15s}
+.btn:hover{text-decoration:none;opacity:.92;translate:0 -2px}
+.btn.ghost{background:transparent;color:var(--accent-text)}
+
+.stage{margin-top:36px;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}
+.canvas-wrap{position:relative;height:300px}
+.canvas-wrap canvas{display:block;width:100%;height:100%}
+.labels{position:absolute;inset:0;pointer-events:none}
+.labels span{position:absolute;transform:translate(-50%,0);font-size:.72rem;font-weight:600;color:var(--muted);white-space:nowrap}
+.stage-cap{padding:12px 16px;border-top:1px solid var(--line);font-size:.86rem;color:var(--muted);
+  display:flex;gap:8px 18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+.legend .a{background:var(--accent)} .legend .b{background:var(--warn)}
+
+section{padding:44px 0;border-top:1px solid var(--line)}
+h2{font-size:1.5rem;letter-spacing:-.02em;margin:0 0 22px}
+.about p{max-width:68ch;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;
+  display:flex;flex-direction:column;gap:10px;
+  transition:transform .18s ease-out,border-color .2s,box-shadow .2s,opacity .6s,translate .6s;will-change:transform}
+.card:hover{border-color:var(--accent);box-shadow:0 10px 30px -12px color-mix(in srgb,var(--accent) 45%,transparent)}
+.card h3{margin:0;font-size:1.1rem;letter-spacing:-.01em}
+.card .kind{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.card p{margin:0;font-size:.96rem}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:4px}
+.tag{font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--muted);
+  transition:border-color .2s,color .2s}
+.tag:hover{border-color:var(--accent);color:var(--accent-text)}
+.links{display:flex;gap:14px;font-size:.9rem;font-weight:600}
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px}
+.skills h3{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px}
+.skills .tags{margin:0;padding:0}
+.skills .tag{color:var(--text)}
+.rows{display:grid;gap:14px}
+.row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.row b{font-weight:600}
+.row span{color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);font-size:.88rem}
+
+.js .reveal{opacity:0;translate:0 18px;transition:opacity .6s ease,translate .6s ease}
+.js .reveal.in{opacity:1;translate:0 0}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .js .reveal{opacity:1;translate:none;transition:none}
+  .status::before{animation:none}
+  .build .word{transition:none}
+}
+@media (max-width:640px){
+  .links-nav{display:none}
+  .hero{padding-top:44px}
+}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add("js");</script>
+<div id="bar"></div>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">Layla El Hajjaji</a>
+    <nav>
+      <span class="links-nav">
+        <a href="#projects" data-i18n="nav_projects">Projects</a>
+        <a href="#skills" data-i18n="nav_skills">Skills</a>
+        <a href="#contact" data-i18n="nav_contact">Contact</a>
+      </span>
+      <span class="tools">
+        <button class="pill" id="lang" type="button" aria-label="Change language">FR</button>
+        <button class="pill" id="theme" type="button" aria-label="Change theme">Theme</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<div class="wrap">
+  <div class="hero">
+    <span class="status" data-i18n="status">Looking for a 6-month PFE internship in Morocco, from February 2027</span>
+    <h1>Layla El Hajjaji</h1>
+    <p class="role" data-i18n="role">Engineering student, Big Data &amp; Cloud Computing</p>
+    <p class="build"><span data-i18n="build_pre">I build</span> <span class="word" id="word">data pipelines</span></p>
+    <p class="lead" data-i18n="lead">I like the part where several pieces have to work together for real. I learn new tools quickly and I want to understand why a design works, not only that it runs.</p>
+    <div class="cta">
+      <a class="btn" href="#projects" data-i18n="cta_projects">See my projects</a>
+      <a class="btn ghost" href="https://ma.linkedin.com/in/layla-el-hajjaji">LinkedIn</a>
+      <a class="btn ghost" href="https://github.com/leeliya">GitHub</a>
+    </div>
+
+    <div class="stage reveal" id="stage">
+      <div class="canvas-wrap" id="cwrap" role="img" aria-label="Animated 3D diagram of a real-time data pipeline: sensors, Kafka, Flink, ClickHouse, Grafana">
+        <canvas id="scene"></canvas>
+        <div class="labels" id="labels"></div>
+      </div>
+      <div class="stage-cap">
+        <span data-i18n="stage_cap">My real-time IoT project, from sensors to dashboards.</span>
+        <span class="legend">
+          <span><i class="a"></i><span data-i18n="leg1">Normal reading</span></span>
+          <span><i class="b"></i><span data-i18n="leg2">Anomaly flagged by Flink</span></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <section class="about reveal" id="about">
+    <h2 data-i18n="about_h">About</h2>
+    <p data-i18n="about_1">I am in the final year of the engineering cycle in Big Data &amp; Cloud Computing at ENSET Mohammedia (Université Hassan II). My work covers data engineering, backend microservices, and mobile and full-stack apps.</p>
+    <p data-i18n="about_2">What interests me most is where software, big data and AI meet: moving data reliably, serving it through clean services, and putting models and agents on top of it. My projects range from real-time data platforms to the server behind a robotics competition.</p>
+  </section>
+
+  <section id="projects">
+    <h2 class="reveal" data-i18n="proj_h">Projects</h2>
+    <div class="grid">
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p1_kind">Big Data, real time</span>
+        <h3 data-i18n="p1_t">Real-time IoT anomaly detection platform</h3>
+        <p data-i18n="p1_d">Simulated sensors stream into Kafka. Two Flink jobs flag anomalies with thresholds and compute windowed aggregations. ClickHouse stores raw readings, aggregates and alerts, and Grafana dashboards show it all live. The whole stack runs with Docker Compose.</p>
+        <div class="tags"><span class="tag">Kafka</span><span class="tag">PyFlink</span><span class="tag">ClickHouse</span><span class="tag">Grafana</span><span class="tag">Docker</span><span class="tag">Python</span></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p2_kind">IoT and computer vision</span>
+        <h3 data-i18n="p2_t">Smart glasses for visually impaired people</h3>
+        <p data-i18n="p2_d">Connected glasses that help in three ways. An ESP32-CAM sends images over Wi-Fi to a Flask server that reads text aloud through a multimodal API, recognises Moroccan banknotes and coins, and warns about obstacles with a spoken direction. The two vision modes use YOLOv8 models trained on annotated datasets, and a companion Android app sets the Wi-Fi network and the language.</p>
+        <div class="tags"><span class="tag">ESP32-CAM</span><span class="tag">YOLOv8</span><span class="tag">Flask</span><span class="tag">Python</span><span class="tag">Android</span><span class="tag">Multimodal API</span><span class="tag">Text-to-speech</span></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p3_kind">Cybersecurity and AI, internship</span>
+        <h3 data-i18n="p3_t">SafeNet IDS: intrusion detection with deep learning</h3>
+        <p data-i18n="p3_d">A web application that analyses network traffic captured as PCAP files and flags attacks. After signing in, the user uploads a file and picks a detection model: CNN, DNN, XGBoost, Random Forest or an ensemble. The models were trained and compared on CICIDS2017, NSL-KDD and UNSW-NB15, with SMOTE to handle rare attack classes. Built during a one-month internship at 3D Smart Factory.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">TensorFlow / Keras</span><span class="tag">scikit-learn</span><span class="tag">XGBoost</span><span class="tag">Flask</span><span class="tag">SMOTE</span></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p4_kind">Backend, microservices</span>
+        <h3>ebank-ms-app</h3>
+        <p data-i18n="p4_d">Spring Boot microservices for customers and e-banking, talking through OpenFeign, protected by a Resilience4J circuit breaker, behind an API gateway with Eureka service discovery. A second part adds a Spring AI chatbot that reaches the services through MCP.</p>
+        <div class="links"><a href="https://github.com/leeliya/ebank-ms-app" data-i18n="repo">Repository</a></div>
+        <div class="tags"><span class="tag">Spring Boot</span><span class="tag">Spring Cloud</span><span class="tag">Spring AI</span><span class="tag">MCP</span><span class="tag">Resilience4J</span></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p5_kind">Data engineering, internship project</span>
+        <h3 data-i18n="p5_t">BIM / IFC data pipeline</h3>
+        <p data-i18n="p5_d">An ETL pipeline that reads building models in the IFC format, extracts elements and their properties, transforms them to structured JSON and loads them into SQL. Parsing, extraction, transformation and loading are separate services, and each element's GlobalId is its identity so a re-run updates data instead of duplicating it. The code belongs to the company, so it is not public.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">IfcOpenShell</span><span class="tag">JSON</span><span class="tag">SQL</span></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p6_kind">Robotics, IoT</span>
+        <h3 data-i18n="p6_t">Central server for a robotics competition</h3>
+        <p data-i18n="p6_d">I led the development of the central server for the 8th edition of MRNC, organised by Club Mécatronique ENSET Mohammedia. A Flask REST API with token authentication sends commands over MQTT to ESP32 boards that drive real actuators: a table motor, a gate servo and an elevator.</p>
+        <div class="tags"><span class="tag">Flask</span><span class="tag">MQTT</span><span class="tag">ESP32</span><span class="tag">REST API</span></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p9_kind">Systems, command-line tool</span>
+        <h3 data-i18n="p9_t">MAPC: a code performance monitor</h3>
+        <p data-i18n="p9_d">A command-line tool written in Bash that measures how a program behaves and reports where it is slow. It profiles execution time, memory (with Valgrind) and system calls (with strace), and can run the analysis in forked processes, threads or an isolated subshell. Reports come out as text, HTML, JSON or CSV, and a run can be compared with an earlier one. It has timestamped logging, admin-only options and clear error codes.</p>
+        <div class="tags"><span class="tag">Bash</span><span class="tag">Valgrind</span><span class="tag">strace</span><span class="tag">Linux</span><span class="tag">C</span></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p7_kind">Mobile, AI</span>
+        <h3 data-i18n="p7_t">Smart Study AI</h3>
+        <p data-i18n="p7_d">A Flutter app that gathers a student's notes, tasks and Pomodoro sessions in one place. Gemini summarises long notes and powers a study chat assistant, and notes can be dictated by voice and exported to PDF. Data syncs in real time through Firebase, with Google sign-in and a dark mode. The code is split into presentation, services and model layers.</p>
+        <div class="tags"><span class="tag">Flutter</span><span class="tag">Dart</span><span class="tag">Firebase</span><span class="tag">Gemini API</span><span class="tag">REST</span></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p10_kind">Full-stack, professional project</span>
+        <h3 data-i18n="p10_t">Web platform for a client company</h3>
+        <p data-i18n="p10_d">A full-stack web application built for a company during a professional project, with Next.js, React, TypeScript, Tailwind CSS, Prisma and API routes. It is covered by a non-disclosure agreement, so I cannot share its details or code. I am happy to discuss the technical choices in general terms.</p>
+        <div class="tags"><span class="tag">Next.js</span><span class="tag">React</span><span class="tag">TypeScript</span><span class="tag">Tailwind CSS</span><span class="tag">Prisma</span></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="kind" data-i18n="p8_kind">Machine learning, coursework</span>
+        <h3 data-i18n="p8_t">Data mining on credit and retail data</h3>
+        <p data-i18n="p8_d">A Jupyter notebook on the UCI Credit Card Default and Online Retail II datasets: preprocessing, decision-tree classification, and association rules with Apriori and FP-Growth. I also corrected my own reading of a depth-versus-accuracy curve once I saw that class imbalance was hiding weak results on the minority class.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">Jupyter</span><span class="tag">Decision trees</span><span class="tag">Apriori</span><span class="tag">FP-Growth</span></div>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="skills" class="reveal">
+    <h2 data-i18n="skills_h">Skills</h2>
+    <div class="skills">
+      <div><h3 data-i18n="s1">Data engineering</h3>
+        <div class="tags"><span class="tag">Kafka</span><span class="tag">Flink</span><span class="tag">Spark</span><span class="tag">ClickHouse</span><span class="tag">Delta Lake</span><span class="tag">Grafana</span><span class="tag">SQL</span></div></div>
+      <div><h3 data-i18n="s2">Backend</h3>
+        <div class="tags"><span class="tag">Java</span><span class="tag">Spring Boot</span><span class="tag">Spring Cloud</span><span class="tag">Node.js</span><span class="tag">Flask</span><span class="tag">Python</span></div></div>
+      <div><h3 data-i18n="s3">Mobile and web</h3>
+        <div class="tags"><span class="tag">Flutter</span><span class="tag">Android</span><span class="tag">Ionic</span><span class="tag">Angular</span><span class="tag">React</span><span class="tag">Next.js</span><span class="tag">TypeScript</span></div></div>
+      <div><h3 data-i18n="s4">AI and ML</h3>
+        <div class="tags"><span class="tag">YOLOv8</span><span class="tag">TensorFlow / Keras</span><span class="tag">scikit-learn</span><span class="tag">XGBoost</span><span class="tag">CNN, transfer learning</span><span class="tag">Gemini API</span><span class="tag">Spring AI</span></div></div>
+      <div><h3 data-i18n="s5">Tools and IoT</h3>
+        <div class="tags"><span class="tag">Docker</span><span class="tag">Git</span><span class="tag">Jenkins</span><span class="tag">Linux</span><span class="tag">Bash</span><span class="tag">MQTT</span><span class="tag">ESP32</span></div></div>
+    </div>
+  </section>
+
+  <section id="education" class="reveal">
+    <h2 data-i18n="edu_h">Education and languages</h2>
+    <div class="rows">
+      <div class="row"><b data-i18n="edu_1">Engineering cycle, Big Data &amp; Cloud Computing</b><span data-i18n="edu_1s">ENSET Mohammedia, Université Hassan II, final year</span></div>
+      <div class="row"><b data-i18n="lang_h">Languages</b><span data-i18n="lang_v">Arabic (native), French (C1), English (C2)</span></div>
+    </div>
+  </section>
+
+  <section id="contact" class="reveal">
+    <h2 data-i18n="contact_h">Contact</h2>
+    <p data-i18n="contact_p">I am available for a 6-month end-of-studies internship in Morocco from February 2027. The easiest way to reach me is LinkedIn.</p>
+    <div class="cta">
+      <a class="btn" href="https://ma.linkedin.com/in/layla-el-hajjaji">LinkedIn</a>
+      <a class="btn ghost" href="https://github.com/leeliya">GitHub</a>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer><div class="wrap" data-i18n="foot">Layla El Hajjaji, Mohammedia, Morocco</div></footer>
+
+<script>
+/* ---------- text, in two languages ---------- */
+var T = {
+  en:{nav_projects:"Projects",nav_skills:"Skills",nav_contact:"Contact",
+    status:"Looking for a 6-month PFE internship in Morocco, from February 2027",
+    role:"Engineering student, Big Data & Cloud Computing",
+    build_pre:"I build",
+    lead:"I like the part where several pieces have to work together for real. I learn new tools quickly and I want to understand why a design works, not only that it runs.",
+    cta_projects:"See my projects",
+    stage_cap:"My real-time IoT project, from sensors to dashboards.",
+    leg1:"Normal reading",leg2:"Anomaly flagged by Flink",
+    stage_alt:"Animated 3D diagram of a real-time data pipeline: sensors, Kafka, Flink, ClickHouse, Grafana",
+    about_h:"About",
+    about_1:"I am in the final year of the engineering cycle in Big Data & Cloud Computing at ENSET Mohammedia (Université Hassan II). My work covers data engineering, backend microservices, and mobile and full-stack apps.",
+    about_2:"What interests me most is where software, big data and AI meet: moving data reliably, serving it through clean services, and putting models and agents on top of it. My projects range from real-time data platforms to the server behind a robotics competition.",
+    proj_h:"Projects",repo:"Repository",
+    p1_kind:"Big Data, real time",
+    p1_t:"Real-time IoT anomaly detection platform",
+    p1_d:"Simulated sensors stream into Kafka. Two Flink jobs flag anomalies with thresholds and compute windowed aggregations. ClickHouse stores raw readings, aggregates and alerts, and Grafana dashboards show it all live. The whole stack runs with Docker Compose.",
+    p2_kind:"IoT and computer vision",
+    p2_t:"Smart glasses for visually impaired people",
+    p2_d:"Connected glasses that help in three ways. An ESP32-CAM sends images over Wi-Fi to a Flask server that reads text aloud through a multimodal API, recognises Moroccan banknotes and coins, and warns about obstacles with a spoken direction. The two vision modes use YOLOv8 models trained on annotated datasets, and a companion Android app sets the Wi-Fi network and the language.",
+    p3_kind:"Cybersecurity and AI, internship",
+    p3_t:"SafeNet IDS: intrusion detection with deep learning",
+    p3_d:"A web application that analyses network traffic captured as PCAP files and flags attacks. After signing in, the user uploads a file and picks a detection model: CNN, DNN, XGBoost, Random Forest or an ensemble. The models were trained and compared on CICIDS2017, NSL-KDD and UNSW-NB15, with SMOTE to handle rare attack classes. Built during a one-month internship at 3D Smart Factory.",
+    p4_kind:"Backend, microservices",
+    p4_d:"Spring Boot microservices for customers and e-banking, talking through OpenFeign, protected by a Resilience4J circuit breaker, behind an API gateway with Eureka service discovery. A second part adds a Spring AI chatbot that reaches the services through MCP.",
+    p5_kind:"Data engineering, internship project",
+    p5_t:"BIM / IFC data pipeline",
+    p5_d:"An ETL pipeline that reads building models in the IFC format, extracts elements and their properties, transforms them to structured JSON and loads them into SQL. Parsing, extraction, transformation and loading are separate services, and each element's GlobalId is its identity so a re-run updates data instead of duplicating it. The code belongs to the company, so it is not public.",
+    p6_kind:"Robotics, IoT",
+    p6_t:"Central server for a robotics competition",
+    p6_d:"I led the development of the central server for the 8th edition of MRNC, organised by Club Mécatronique ENSET Mohammedia. A Flask REST API with token authentication sends commands over MQTT to ESP32 boards that drive real actuators: a table motor, a gate servo and an elevator.",
+    p7_kind:"Mobile, AI",
+    p7_t:"Smart Study AI",
+    p7_d:"A Flutter app that gathers a student's notes, tasks and Pomodoro sessions in one place. Gemini summarises long notes and powers a study chat assistant, and notes can be dictated by voice and exported to PDF. Data syncs in real time through Firebase, with Google sign-in and a dark mode. The code is split into presentation, services and model layers.",
+    p8_kind:"Machine learning, coursework",
+    p8_t:"Data mining on credit and retail data",
+    p8_d:"A Jupyter notebook on the UCI Credit Card Default and Online Retail II datasets: preprocessing, decision-tree classification, and association rules with Apriori and FP-Growth. I also corrected my own reading of a depth-versus-accuracy curve once I saw that class imbalance was hiding weak results on the minority class.",
+    p9_kind:"Systems, command-line tool",
+    p9_t:"MAPC: a code performance monitor",
+    p9_d:"A command-line tool written in Bash that measures how a program behaves and reports where it is slow. It profiles execution time, memory (with Valgrind) and system calls (with strace), and can run the analysis in forked processes, threads or an isolated subshell. Reports come out as text, HTML, JSON or CSV, and a run can be compared with an earlier one. It has timestamped logging, admin-only options and clear error codes.",
+    p10_kind:"Full-stack, professional project",
+    p10_t:"Web platform for a client company",
+    p10_d:"A full-stack web application built for a company during a professional project, with Next.js, React, TypeScript, Tailwind CSS, Prisma and API routes. It is covered by a non-disclosure agreement, so I cannot share its details or code. I am happy to discuss the technical choices in general terms.",
+    skills_h:"Skills",s1:"Data engineering",s2:"Backend",s3:"Mobile and web",s4:"AI and ML",s5:"Tools and IoT",
+    edu_h:"Education and languages",edu_1:"Engineering cycle, Big Data & Cloud Computing",edu_1s:"ENSET Mohammedia, Université Hassan II, final year",
+    lang_h:"Languages",lang_v:"Arabic (native), French (C1), English (C2)",
+    contact_h:"Contact",contact_p:"I am available for a 6-month end-of-studies internship in Morocco from February 2027. The easiest way to reach me is LinkedIn.",
+    foot:"Layla El Hajjaji, Mohammedia, Morocco",
+    words:["data pipelines","microservices","AI agents","IoT systems"]},
+  fr:{nav_projects:"Projets",nav_skills:"Compétences",nav_contact:"Contact",
+    status:"À la recherche d'un stage PFE de 6 mois au Maroc, à partir de février 2027",
+    role:"Étudiante ingénieure, Big Data & Cloud Computing",
+    build_pre:"Je construis",
+    lead:"J'aime le moment où plusieurs composants doivent vraiment fonctionner ensemble. J'apprends vite de nouveaux outils et je veux comprendre pourquoi une conception fonctionne, pas seulement qu'elle tourne.",
+    cta_projects:"Voir mes projets",
+    stage_cap:"Mon projet IoT temps réel, des capteurs aux tableaux de bord.",
+    leg1:"Mesure normale",leg2:"Anomalie détectée par Flink",
+    stage_alt:"Schéma 3D animé d'un pipeline de données temps réel : capteurs, Kafka, Flink, ClickHouse, Grafana",
+    about_h:"À propos",
+    about_1:"Je suis en dernière année du cycle ingénieur Big Data & Cloud Computing à l'ENSET Mohammedia (Université Hassan II). Je travaille sur l'ingénierie des données, les microservices backend, et les applications mobiles et full-stack.",
+    about_2:"Ce qui m'intéresse le plus, c'est la rencontre entre le logiciel, le big data et l'IA : déplacer les données de façon fiable, les exposer via des services propres, et construire des modèles et des agents par-dessus. Mes projets vont des plateformes de données temps réel au serveur d'une compétition de robotique.",
+    proj_h:"Projets",repo:"Dépôt",
+    p1_kind:"Big Data, temps réel",
+    p1_t:"Plateforme temps réel de détection d'anomalies IoT",
+    p1_d:"Des capteurs simulés envoient leurs données dans Kafka. Deux jobs Flink détectent les anomalies par seuils et calculent des agrégations par fenêtres. ClickHouse stocke les mesures brutes, les agrégats et les alertes, et des tableaux de bord Grafana affichent le tout en direct. L'ensemble tourne avec Docker Compose.",
+    p2_kind:"IoT et vision par ordinateur",
+    p2_t:"Lunettes intelligentes pour personnes malvoyantes",
+    p2_d:"Des lunettes connectées qui aident de trois façons. Une ESP32-CAM envoie des images en Wi-Fi à un serveur Flask qui lit un texte à voix haute grâce à une API multimodale, reconnaît les billets et pièces marocains, et signale les obstacles avec une direction annoncée à l'oral. Les deux modes de vision utilisent des modèles YOLOv8 entraînés sur des jeux de données annotés, et une application Android permet de choisir le réseau Wi-Fi et la langue.",
+    p3_kind:"Cybersécurité et IA, stage",
+    p3_t:"SafeNet IDS : détection d'intrusions par deep learning",
+    p3_d:"Une application web qui analyse le trafic réseau capturé dans des fichiers PCAP et signale les attaques. Après connexion, l'utilisateur dépose un fichier et choisit un modèle de détection : CNN, DNN, XGBoost, Random Forest ou un ensemble. Les modèles ont été entraînés et comparés sur CICIDS2017, NSL-KDD et UNSW-NB15, avec SMOTE pour les classes d'attaques rares. Réalisé pendant un stage d'un mois chez 3D Smart Factory.",
+    p4_kind:"Backend, microservices",
+    p4_d:"Microservices Spring Boot pour les clients et l'e-banking, communiquant via OpenFeign, protégés par un circuit breaker Resilience4J, derrière une passerelle API avec découverte de services Eureka. Une seconde partie ajoute un chatbot Spring AI qui accède aux services via MCP.",
+    p5_kind:"Ingénierie des données, projet de stage",
+    p5_t:"Pipeline de données BIM / IFC",
+    p5_d:"Un pipeline ETL qui lit des maquettes numériques au format IFC, extrait les éléments et leurs propriétés, les transforme en JSON structuré et les charge en SQL. L'analyse, l'extraction, la transformation et le chargement sont des services séparés, et le GlobalId de chaque élément sert d'identité : une ré-exécution met à jour les données au lieu de les dupliquer. Le code appartient à l'entreprise, il n'est donc pas public.",
+    p6_kind:"Robotique, IoT",
+    p6_t:"Serveur central d'une compétition de robotique",
+    p6_d:"J'ai dirigé le développement du serveur central de la 8e édition de MRNC, organisée par le Club Mécatronique de l'ENSET Mohammedia. Une API REST Flask avec authentification par jeton envoie des commandes via MQTT à des cartes ESP32 qui pilotent de vrais actionneurs : un moteur de table, un servo de porte et un ascenseur.",
+    p7_kind:"Mobile, IA",
+    p7_t:"Smart Study AI",
+    p7_d:"Une application Flutter qui réunit les notes, les tâches et les sessions Pomodoro d'un étudiant. Gemini résume les longues notes et alimente un assistant de révision par chat ; les notes peuvent être dictées à la voix et exportées en PDF. Les données se synchronisent en temps réel avec Firebase, avec connexion Google et mode sombre. Le code est séparé en couches présentation, services et modèles.",
+    p8_kind:"Machine learning, projet de cours",
+    p8_t:"Data mining sur des données de crédit et de commerce",
+    p8_d:"Un notebook Jupyter sur les jeux de données UCI Credit Card Default et Online Retail II : prétraitement, classification par arbres de décision, et règles d'association avec Apriori et FP-Growth. J'ai aussi corrigé ma lecture d'une courbe profondeur-précision en voyant que le déséquilibre des classes cachait de mauvais résultats sur la classe minoritaire.",
+    p9_kind:"Systèmes, outil en ligne de commande",
+    p9_t:"MAPC : un moniteur de performances du code",
+    p9_d:"Un outil en ligne de commande écrit en Bash qui mesure le comportement d'un programme et indique où il est lent. Il analyse le temps d'exécution, la mémoire (avec Valgrind) et les appels système (avec strace), et peut lancer l'analyse dans des processus fork, des threads ou un sous-shell isolé. Les rapports sortent en texte, HTML, JSON ou CSV, et une exécution peut être comparée à une précédente. Il offre une journalisation horodatée, des options réservées à l'administrateur et des codes d'erreur clairs.",
+    p10_kind:"Full-stack, projet professionnel",
+    p10_t:"Plateforme web pour une entreprise cliente",
+    p10_d:"Une application web full-stack réalisée pour une entreprise lors d'un projet professionnel, avec Next.js, React, TypeScript, Tailwind CSS, Prisma et des API routes. Elle est couverte par un accord de confidentialité : je ne peux donc pas en partager les détails ni le code. Je suis ravie d'en discuter les choix techniques en termes généraux.",
+    skills_h:"Compétences",s1:"Ingénierie des données",s2:"Backend",s3:"Mobile et web",s4:"IA et ML",s5:"Outils et IoT",
+    edu_h:"Formation et langues",edu_1:"Cycle ingénieur, Big Data & Cloud Computing",edu_1s:"ENSET Mohammedia, Université Hassan II, dernière année",
+    lang_h:"Langues",lang_v:"Arabe (langue maternelle), français (C1), anglais (C2)",
+    contact_h:"Contact",contact_p:"Je suis disponible pour un stage de fin d'études de 6 mois au Maroc à partir de février 2027. Le plus simple pour me joindre est LinkedIn.",
+    foot:"Layla El Hajjaji, Mohammedia, Maroc",
+    words:["des pipelines de données","des microservices","des agents IA","des systèmes IoT"]}
+};
+
+var root = document.documentElement;
+var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function store(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+
+/* ---------- rotating word ---------- */
+var wordEl = document.getElementById("word"), wi = 0, wtimer = null;
+function showWord(){ wordEl.textContent = T[root.lang].words[wi % T[root.lang].words.length]; }
+function startWords(){
+  clearInterval(wtimer);
+  if(reduce) return;
+  wtimer = setInterval(function(){
+    wordEl.classList.add("out");
+    setTimeout(function(){ wi++; showWord(); wordEl.classList.remove("out"); }, 320);
+  }, 2600);
+}
+
+/* ---------- language and theme ---------- */
+function setLang(l){
+  root.lang = l;
+  document.querySelectorAll("[data-i18n]").forEach(function(el){
+    var v = T[l][el.getAttribute("data-i18n")];
+    if(v !== undefined) el.textContent = v;
+  });
+  document.getElementById("cwrap").setAttribute("aria-label", T[l].stage_alt);
+  document.getElementById("lang").textContent = l === "en" ? "FR" : "EN";
+  showWord(); startWords();
+  store("lang", l);
+}
+function setTheme(t){
+  if(t) root.setAttribute("data-theme", t); else root.removeAttribute("data-theme");
+  if(window.__sceneTheme) window.__sceneTheme();
+}
+var lang = load("lang") || ((navigator.language||"en").toLowerCase().indexOf("fr")===0 ? "fr" : "en");
+setLang(lang);
+var th = load("theme"); if(th) root.setAttribute("data-theme", th);
+document.getElementById("lang").onclick = function(){ setLang(root.lang === "en" ? "fr" : "en"); };
+document.getElementById("theme").onclick = function(){
+  var dark = root.getAttribute("data-theme") === "dark" ||
+    (!root.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  var next = dark ? "light" : "dark"; setTheme(next); store("theme", next);
+};
+
+/* ---------- reveal on scroll, scroll bar, card tilt ---------- */
+(function(){
+  var items = document.querySelectorAll(".reveal");
+  if(!("IntersectionObserver" in window) || reduce){
+    items.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var n = 0;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var d = (n++ % 3) * 90;
+          setTimeout(function(){ e.target.classList.add("in"); }, d);
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:0.12});
+    items.forEach(function(el){ io.observe(el); });
+  }
+  var bar = document.getElementById("bar");
+  function onScroll(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.transform = "scaleX(" + (h > 0 ? Math.min(1, window.scrollY / h) : 0) + ")";
+  }
+  if(!reduce){ window.addEventListener("scroll", onScroll, {passive:true}); onScroll(); }
+  if(!reduce && window.matchMedia("(hover:hover) and (pointer:fine)").matches){
+    document.querySelectorAll(".card").forEach(function(c){
+      c.addEventListener("pointermove", function(e){
+        var r = c.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        c.style.transform = "perspective(800px) rotateX(" + (-y*5).toFixed(2) + "deg) rotateY(" + (x*6).toFixed(2) + "deg)";
+      });
+      c.addEventListener("pointerleave", function(){ c.style.transform = ""; });
+    });
+  }
+})();
+
+/* ---------- 3D pipeline scene (plain canvas, no library) ---------- */
+(function(){
+  var canvas = document.getElementById("scene");
+  var wrap = document.getElementById("cwrap");
+  var labelsEl = document.getElementById("labels");
+  var ctx = canvas.getContext && canvas.getContext("2d");
+  if(!ctx){ document.getElementById("stage").style.display = "none"; return; }
+
+  var C = {};                         /* theme colours, read from CSS */
+  function readColors(){
+    var cs = getComputedStyle(root);
+    ["--accent","--text","--muted","--warn"].forEach(function(k){ C[k] = cs.getPropertyValue(k).trim(); });
+  }
+  readColors();
+
+  var X = [-8,-4,0,4,8];                                       /* stage positions along the pipeline */
+  var NAMES = ["Sensors","Kafka","Flink","ClickHouse","Grafana"];
+  var labels = NAMES.map(function(n){
+    var s = document.createElement("span"); s.textContent = n; labelsEl.appendChild(s); return s;
+  });
+
+  /* --- geometry helpers --- */
+  function box(w,h,d){
+    var x=w/2,y=h/2,z=d/2;
+    return {v:[[-x,-y,-z],[x,-y,-z],[x,y,-z],[-x,y,-z],[-x,-y,z],[x,-y,z],[x,y,z],[-x,y,z]],
+      e:[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]],
+      f:[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]]};
+  }
+  function octa(r){
+    return {v:[[r,0,0],[-r,0,0],[0,r,0],[0,-r,0],[0,0,r],[0,0,-r]],
+      e:[[0,2],[0,3],[0,4],[0,5],[1,2],[1,3],[1,4],[1,5],[2,4],[2,5],[3,4],[3,5]]};
+  }
+  function ring(r,n){
+    var v=[],e=[];
+    for(var i=0;i<n;i++){ var a=i/n*Math.PI*2; v.push([0,r*Math.cos(a),r*Math.sin(a)]); e.push([i,(i+1)%n]); }
+    return {v:v,e:e};
+  }
+  function mk(g,pos,col,o){
+    var s = {v:g.v,e:g.e,f:g.f||null,pos:pos,rx:0,ry:0,rz:0,s:1,col:col,alpha:.9,fill:!!g.f};
+    if(o) for(var k in o) s[k]=o[k];
+    return s;
+  }
+
+  var shapes = [], sensors = [], kafka = [], cols = [];
+  var ys=[-2,-1.2,-.4,.4,1.2,2], zs=[.8,-.9,.5,-.6,.9,-.8];
+  for(var i=0;i<6;i++){ var sh=mk(box(.5,.5,.5),[X[0],ys[i],zs[i]],"--muted"); sensors.push(sh); shapes.push(sh); }
+  for(i=0;i<3;i++){ var r=mk(ring(1.15,30),[X[1]+(i-1)*.7,0,0],"--accent"); kafka.push(r); shapes.push(r); }
+  var flinkOuter = mk(octa(1.25),[X[2],0,0],"--accent"), flinkInner = mk(octa(.6),[X[2],0,0],"--accent",{alpha:.7});
+  shapes.push(flinkOuter, flinkInner);
+  var hs=[1.3,2.4,1.8,2.9,2.1];
+  for(i=0;i<5;i++){ var c=mk(box(.46,hs[i],.46),[X[3]+(i-2)*.72,-2.4+hs[i]/2,0],"--accent"); cols.push(c); shapes.push(c); }
+  shapes.push(mk(box(3.4,2.4,.06),[X[4],0,0],"--accent",{alpha:.8}));
+  var graf = {v:[],e:[],pos:[X[4],0,0],rx:0,ry:0,rz:0,s:1,col:"--warn",alpha:1,fill:false,width:2};
+  for(i=0;i<36;i++){ graf.v.push([0,0,0]); if(i) graf.e.push([i-1,i]); }
+  shapes.push(graf);
+
+  var grid = {v:[],e:[],pos:[0,-2.4,0],rx:0,ry:0,rz:0,s:1,col:"--muted",alpha:.22,fill:false};
+  (function(){
+    var k=0;
+    for(var z=-4;z<=4;z++){ grid.v.push([-10,0,z],[10,0,z]); grid.e.push([k,k+1]); k+=2; }
+    for(var x=-10;x<=10;x+=1){ grid.v.push([x,0,-4],[x,0,4]); grid.e.push([k,k+1]); k+=2; }
+  })();
+
+  /* --- particles: readings flowing left to right --- */
+  var N = 150, P = [];
+  function respawn(p){ p.y=(Math.random()*2-1)*2.1; p.z=(Math.random()*2-1)*1.4; p.an=Math.random()<.1; }
+  for(i=0;i<N;i++){ var p={s:Math.random(),v:.05+Math.random()*.05,ph:Math.random()*6.28}; respawn(p); P.push(p); }
+  var pulse = 0;
+
+  /* --- camera --- */
+  var W=0,H=0,F=0,D=22,dpr=1,yaw=0,pitch=.27,oy=0;
+  var mx=0,my=0,tmx=0,tmy=0;
+  function resize(){
+    var w = wrap.clientWidth;
+    var h = Math.round(Math.min(340, Math.max(190, w*.44)));
+    wrap.style.height = h+"px";
+    dpr = Math.min(window.devicePixelRatio||1, 2);
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    W=w; H=h; F = W*D/21;
+    oy = -H*.07;
+    if(!running) draw(performance.now()/1000, 0);
+  }
+  function proj(p){
+    var x=p[0], y=p[1], z=p[2];
+    var c=Math.cos(yaw), s=Math.sin(yaw);
+    var x1=c*x+s*z, z1=-s*x+c*z;
+    var cp=Math.cos(pitch), sp=Math.sin(pitch);
+    var y2=cp*y+sp*z1, z2=-sp*y+cp*z1;
+    var zz=z2+D, k=F/zz;
+    return {x:W/2+x1*k, y:H/2-y2*k+oy, z:zz, k:k};
+  }
+  function fade(z){ return Math.max(.35, Math.min(1, 1.15-(z-D)/18)); }
+  function tv(v,sh){
+    var x=v[0]*sh.s,y=v[1]*sh.s,z=v[2]*sh.s,c,s;
+    if(sh.rx){ c=Math.cos(sh.rx); s=Math.sin(sh.rx); var y1=c*y-s*z, z1=s*y+c*z; y=y1; z=z1; }
+    if(sh.ry){ c=Math.cos(sh.ry); s=Math.sin(sh.ry); var x1=c*x+s*z, z2=-s*x+c*z; x=x1; z=z2; }
+    if(sh.rz){ c=Math.cos(sh.rz); s=Math.sin(sh.rz); var x2=c*x-s*y, y3=s*x+c*y; x=x2; y=y3; }
+    return [x+sh.pos[0], y+sh.pos[1], z+sh.pos[2]];
+  }
+  function drawShape(sh){
+    var Pp = sh.v.map(function(v){ return proj(tv(v,sh)); });
+    var color = C[sh.col];
+    if(sh.fill && sh.f){
+      ctx.fillStyle = color; ctx.globalAlpha = .06;
+      sh.f.forEach(function(f){
+        ctx.beginPath(); ctx.moveTo(Pp[f[0]].x,Pp[f[0]].y);
+        for(var j=1;j<f.length;j++) ctx.lineTo(Pp[f[j]].x,Pp[f[j]].y);
+        ctx.closePath(); ctx.fill();
+      });
+    }
+    ctx.strokeStyle = color; ctx.lineWidth = sh.width || 1.3;
+    sh.e.forEach(function(e){
+      var a=Pp[e[0]], b=Pp[e[1]];
+      ctx.globalAlpha = sh.alpha*fade((a.z+b.z)/2);
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    });
+  }
+
+  function draw(t,dt){
+    /* animate */
+    mx += (tmx-mx)*.06; my += (tmy-my)*.06;
+    yaw = Math.sin(t*.25)*.1 + mx*.2; pitch = .27 + my*.07;
+    sensors.forEach(function(s,i){ s.s = 1+.18*Math.sin(t*3+i*1.3); });
+    kafka.forEach(function(r,i){ r.rz = Math.sin(t*.9+i)*.18; r.ry = Math.cos(t*.7+i)*.15; });
+    pulse = Math.max(0, pulse - dt*2.2);
+    flinkOuter.ry += dt*.6; flinkOuter.rx += dt*.25; flinkOuter.s = 1+.14*pulse;
+    flinkInner.ry -= dt*.9; flinkInner.rz += dt*.4; flinkInner.s = 1+.2*pulse;
+    cols.forEach(function(c,i){ c.s = 1; });
+    for(var i=0;i<graf.v.length;i++){
+      var u=i/(graf.v.length-1), x=(u-.5)*3;
+      var y=.55*Math.sin(u*9+t*2.2)*.6 + .25*Math.sin(u*17-t*1.3);
+      var spike = Math.exp(-Math.pow((u-((t*.18)%1)),2)*900)*.7;
+      graf.v[i][0]=x; graf.v[i][1]=y+spike;
+    }
+
+    /* paint */
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    drawShape(grid);
+    shapes.forEach(drawShape);
+
+    var normalBefore = C["--accent"];
+    P.forEach(function(p){
+      var prev = p.s;
+      p.s += p.v*dt;
+      if(p.s>1){ p.s-=1; respawn(p); prev = 0; }
+      var x = -8+16*p.s;
+      if(p.an && prev<=.5 && p.s>.5) pulse = 1;
+      var d = 99; for(var k=0;k<5;k++) d = Math.min(d, Math.abs(x-X[k]));
+      var spread = .3+.7*Math.min(d/1.4,1);
+      var wp = [x, p.y*spread+.12*Math.sin(t*2+p.ph), p.z*spread];
+      var q = proj(wp);
+      var after = x > X[2]-.2;
+      var color = (after && p.an) ? C["--warn"] : (after ? C["--text"] : normalBefore);
+      var rad = Math.max(1.4,.085*q.k);
+      if(after && p.an){
+        ctx.globalAlpha = .22*fade(q.z); ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(q.x,q.y,rad*2.4,0,6.283); ctx.fill();
+      }
+      ctx.globalAlpha = fade(q.z)*(after && !p.an ? .55 : .95); ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(q.x,q.y,rad,0,6.283); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    /* labels follow the 3D positions */
+    for(var j=0;j<5;j++){
+      var l = proj([X[j],-2.95,0]);
+      labels[j].style.left = l.x+"px"; labels[j].style.top = Math.min(H-18,l.y)+"px";
+    }
+  }
+
+  /* --- loop control --- */
+  var running = false, last = 0, visible = true, raf = 0;
+  function loop(now){
+    var t = now/1000, dt = Math.min(.05, last ? t-last : 0); last = t;
+    draw(t, dt);
+    raf = requestAnimationFrame(loop);
+  }
+  function start(){ if(reduce || running || !visible) return; running = true; last = 0; raf = requestAnimationFrame(loop); }
+  function stop(){ running = false; cancelAnimationFrame(raf); }
+
+  window.__sceneTheme = function(){ readColors(); if(!running) draw(performance.now()/1000,0); };
+  if(window.matchMedia){
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if(mq.addEventListener) mq.addEventListener("change", window.__sceneTheme);
+  }
+  if("ResizeObserver" in window) new ResizeObserver(resize).observe(wrap); else window.addEventListener("resize", resize);
+  if("IntersectionObserver" in window){
+    new IntersectionObserver(function(en){ visible = en[0].isIntersecting; visible ? start() : stop(); }).observe(wrap);
+  }
+  document.addEventListener("visibilitychange", function(){ document.hidden ? stop() : start(); });
+  wrap.addEventListener("pointermove", function(e){
+    var r = wrap.getBoundingClientRect();
+    tmx = ((e.clientX-r.left)/r.width-.5)*2; tmy = ((e.clientY-r.top)/r.height-.5)*2;
+  });
+  wrap.addEventListener("pointerleave", function(){ tmx = 0; tmy = 0; });
+
+  resize();
+  if(reduce){
+    /* one still frame, with particles spread along the pipeline */
+    draw(2.5, 0);
+  } else { start(); }
+})();
+</script>
+</body>
+</html>
