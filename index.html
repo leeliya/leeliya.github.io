@@ -111,6 +111,19 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
   .hero{padding-top:44px}
 }
 
+
+.steps{margin-top:14px;display:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chips button{font:inherit;font-size:.82rem;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);
+  color:var(--muted);border-radius:999px;padding:4px 12px 4px 5px;cursor:pointer}
+.chips button b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:var(--accent-text);font-size:.74rem}
+.chips button[aria-current="true"]{border-color:var(--accent);color:var(--text)}
+.chips button[aria-current="true"] b{background:var(--accent);color:#fff}
+.stepcard{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:16px 18px}
+.stepcard h3{margin:0 0 6px;font-size:1.02rem}
+.stepcard p{margin:0;color:var(--muted)}
+.stepcard pre{margin:10px 0 0;padding:10px 12px;border-radius:8px;background:var(--accent-soft);color:var(--text);font-size:.8rem;overflow-x:auto;white-space:pre-wrap}
+#shlabels span.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 /* ---------- 3D showcase ---------- */
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .tabs button{font:inherit;font-size:.88rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);
@@ -292,6 +305,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
       </div>
       <div class="stage-cap"><span id="shcap"></span></div>
     </div>
+    <div class="steps" id="shsteps"><div class="chips" id="shchips"></div><div class="stepcard" id="shcard"></div></div>
     <div class="figs" id="shfigs">
       <figure><img src="img/glasses-catia.jpg" alt="CATIA V5 assembly of the smart glasses" loading="lazy"><figcaption data-i18n="fig1">The real CATIA V5 assembly of the glasses (from my project report).</figcaption></figure>
       <figure><img src="img/glasses-circuit.jpg" alt="Circuit diagram of the glasses electronics: battery, charger, diode, step-up converter, switch, ESP32-CAM and three buttons" loading="lazy"><figcaption data-i18n="fig2">Block diagram of the electronics: power, ESP32-CAM, Wi-Fi link and three buttons.</figcaption></figure>
@@ -339,10 +353,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 /* ---------- text, in two languages ---------- */
 var T = {
   en:{tab_elec:"Glasses electronics",cap_elec:"A 3D model of my glasses electronics, laid out like my circuit diagram. Drag to look around; amber dots show power flowing from the battery to the ESP32-CAM.",l_bat:"LiPo battery 3.7V 500mAh",l_sw:"ON/OFF switch (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Button 1: obstacles",l_b2:"Button 2: read text",l_b3:"Button 3: banknotes and coins",l_res:"3 x 2.4kΩ resistors",l_ch:"CH340 programmer",l_pc:"PC / laptop (USB)",nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
-    tab_glasses:"Smart glasses",tab_pipe:"IoT pipeline",tab_rag:"Nexus-Ops RAG",
+    tab_glasses:"Smart glasses",tab_pipe:"IoT pipeline",tab_rag:"Nexus-Ops workflow",
     cap_glasses:"Wireframe of my smart glasses: frame, camera module and electronics housings on the temples.",
-    cap_pipe:"Sensors to Kafka, Flink, ClickHouse and Grafana. Amber dots are anomalies.",
-    cap_rag:"The RAG assistant of my Nexus-Ops platform: documents are embedded, searched in a FAISS index, and answered by phi3:mini on Ollama through FastAPI and Streamlit.",
+    cap_pipe:"How one reading travels through my IoT platform, from a sensor to the Grafana dashboard. Pick a step to see what happens.",
+    cap_rag:"How Nexus-Ops works: CI on a self-hosted runner, the churn model with MLflow, and the RAG assistant, all in one Kind Kubernetes cluster. Teal dots are the churn-model lane, violet dots the RAG lane.",
     idea:"An idea I want to build, not a finished project",hint:"Drag to rotate",
     fig1:"The real CATIA V5 assembly of the glasses (from my project report).",
     fig2:"Block diagram of the electronics: power, ESP32-CAM, Wi-Fi link and three buttons.",
@@ -400,10 +414,10 @@ var T = {
     foot:"Layla El Hajjaji, Mohammedia, Morocco",
     words:["data pipelines","microservices","AI agents","IoT systems"]},
   fr:{tab_elec:"Électronique des lunettes",cap_elec:"Un modèle 3D de l'électronique de mes lunettes, disposé comme mon schéma électrique. Faites glisser pour tourner ; les points ambre montrent le courant de la batterie vers l'ESP32-CAM.",l_bat:"Batterie LiPo 3,7V 500mAh",l_sw:"Interrupteur ON/OFF (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Bouton 1 : obstacles",l_b2:"Bouton 2 : lecture de texte",l_b3:"Bouton 3 : billets et pièces",l_res:"3 résistances 2,4kΩ",l_ch:"Programmeur CH340",l_pc:"PC portable (USB)",nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
-    tab_glasses:"Lunettes intelligentes",tab_pipe:"Pipeline IoT",tab_rag:"RAG Nexus-Ops",
+    tab_glasses:"Lunettes intelligentes",tab_pipe:"Pipeline IoT",tab_rag:"Workflow Nexus-Ops",
     cap_glasses:"Fil de fer de mes lunettes : monture, module caméra et boîtiers électroniques sur les branches.",
-    cap_pipe:"Des capteurs vers Kafka, Flink, ClickHouse et Grafana. Les points ambre sont des anomalies.",
-    cap_rag:"L'assistant RAG de ma plateforme Nexus-Ops : les documents sont vectorisés, recherchés dans un index FAISS, puis phi3:mini sur Ollama répond via FastAPI et Streamlit.",
+    cap_pipe:"Le trajet d'une mesure dans ma plateforme IoT, du capteur au tableau de bord Grafana. Choisissez une étape pour voir ce qui se passe.",
+    cap_rag:"Comment fonctionne Nexus-Ops : CI sur un runner auto-hébergé, le modèle de churn avec MLflow et l'assistant RAG, le tout dans un cluster Kubernetes Kind. Les points turquoise sont la voie du modèle de churn, les violets la voie RAG.",
     idea:"Une idée que je veux réaliser, pas un projet terminé",hint:"Faites glisser pour tourner",
     fig1:"L'assemblage CATIA V5 réel des lunettes (extrait de mon rapport de projet).",
     fig2:"Schéma bloc de l'électronique : alimentation, ESP32-CAM, liaison Wi-Fi et trois boutons.",
@@ -795,19 +809,6 @@ document.getElementById("theme").onclick = function(){
     L=[{k:"l_lens",p:[0,1.9,0]},{k:"l_cam",p:[-3.9,1.2,.2]},{k:"l_elec",p:[3.9,1.1,-2]},{k:"l_hinge",p:[3.5,-.5,.1]},{k:"l_arm",p:[-3.9,-.9,-4.1]}];
     return {shapes:shapes,labels:L,anim:function(t){},cx:0,cy:0,D:22,figs:true,idea:false};
   }
-  function scenePipe(){
-    var X=[-8,-4,0,4,8],shapes=[],L=[],i;
-    for(i=0;i<3;i++) shapes.push(sh(box(.8,.8,.8,X[0],-1.4+i*1.4,0),"--accent",.9));
-    for(i=0;i<3;i++){ var c=circle(1.1,18,X[1],0,(i-1)*1.1,"y"); shapes.push(sh(c,"--text",.9)); }
-    shapes.push(sh(octa(1.1,X[2],0,0),"--warn",1)); shapes.push(sh(octa(.7,X[2],0,0),"--accent",.8));
-    shapes.push(sh(box(1.2,2.6,1.2,X[3],0,0),"--text",.9));
-    shapes.push(sh(box(2.2,1.6,.2,X[4],0,0),"--accent",.9));
-    shapes.push(sh({v:[[X[0]+.4,0,0],[X[4]-1.1,0,0]],e:[[0,1]]},"--muted",.5));
-    L=[{k:null,t:"Sensors",p:[X[0],-2.6,0]},{k:null,t:"Kafka",p:[X[1],1.9,0]},{k:null,t:"Flink",p:[X[2],1.9,0]},{k:null,t:"ClickHouse",p:[X[3],1.9,0]},{k:null,t:"Grafana",p:[X[4],1.5,0]}];
-    var P=[];for(i=0;i<46;i++) P.push({u:Math.random(),y:(Math.random()*2-1)*1.4,z:(Math.random()*2-1)*.9,an:Math.random()<.1,s:.05+Math.random()*.05});
-    return {shapes:shapes,labels:L,particles:P,flow:function(p){ var x=-7.6+p.u*15.2; return [x,p.y*(p.u<.25?1:.25),p.z]; },
-      anomaly:function(p){ return p.an && p.u>.5; },D:25,figs:false,idea:false};
-  }
   /* ---------- solid (shaded) renderer used by the electronics scene ---------- */
   var HC={};
   function shadeC(c,k){ var h=HC[c]; if(!h){ h=HC[c]=[parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)]; }
@@ -881,54 +882,118 @@ document.getElementById("theme").onclick = function(){
     /* centre the whole scene */
     var SHX=1; function tr(q){ q[0]+=SHX; }
     S.forEach(function(o){ o.f.forEach(function(f){ f.v.forEach(tr); }); tr(o.ctr); }); W_.forEach(function(w){ w.pts.forEach(tr); }); path.forEach(tr); L.forEach(function(l){ tr(l.p); });
-    return {solid:true,solids:S,wires:W_,labels:L,particles:P,path:path,len:len,tot:tot,slab:[[-10.2+SHX,-.02,-6],[8.9+SHX,-.02,-6],[8.9+SHX,-.02,5.9],[-10.2+SHX,-.02,5.9]],
+    return {solid:true,solids:S,wires:W_,labels:L,particles:P,paths:[{pts:path,len:len,tot:tot,c:"#fbbf24"}],slab:[[-10.2+SHX,-.02,-6],[8.9+SHX,-.02,-6],[8.9+SHX,-.02,5.9],[-10.2+SHX,-.02,5.9]],
       D:30,figs:true,idea:false,yaw:-.28,pitch:.75};
   }
+  var STEPS={"pipe": [{"s": {"en": "Sensors", "fr": "Capteurs"}, "t": {"en": "1. Sensor simulators", "fr": "1. Simulateurs de capteurs"}, "d": {"en": "Python scripts simulate four sensor types: temperature, vibration, humidity and power. Each sensor sends a JSON reading every 2 seconds, and about 12% of the values are injected anomalies, shown here as amber dots.", "fr": "Des scripts Python simulent quatre types de capteurs : température, vibration, humidité et consommation. Chaque capteur envoie une mesure JSON toutes les 2 secondes, et environ 12 % des valeurs sont des anomalies injectées, ici les points ambre."}, "x": "{\"sensor_id\":\"temp_001\",\"location\":\"zone_A\",\"value\":87.4,\"unit\":\"celsius\",\"is_anomaly\":false}"}, {"s": {"en": "Kafka", "fr": "Kafka"}, "t": {"en": "2. Kafka topics", "fr": "2. Topics Kafka"}, "d": {"en": "Readings are published to one Kafka topic per sensor type: temperature-events, vibration-events, humidity-events and power-events. Kafka sits between the simulators and the processing, so neither side has to wait for the other.", "fr": "Les mesures sont publiées dans un topic Kafka par type de capteur : temperature-events, vibration-events, humidity-events et power-events. Kafka s'intercale entre les simulateurs et le traitement, sans que l'un attende l'autre."}}, {"s": {"en": "anomaly_job", "fr": "anomaly_job"}, "t": {"en": "3. Flink anomaly_job", "fr": "3. Job Flink anomaly_job"}, "d": {"en": "This Flink job reads the topics and compares every value with its sensor's thresholds. Above the normal maximum is HIGH, above the critical threshold is CRITICAL (for temperature, 85 and 100 °C). Every reading is stored in raw_readings, and each anomaly is also written to alerts.", "fr": "Ce job Flink lit les topics et compare chaque valeur aux seuils de son capteur. Au-dessus du maximum normal, l'alerte est HIGH ; au-dessus du seuil critique, elle est CRITICAL (pour la température, 85 et 100 °C). Toutes les mesures vont dans raw_readings, et chaque anomalie est aussi écrite dans alerts."}, "x": "value >= critical     -> CRITICAL\nvalue >= normal_max  -> HIGH"}, {"s": {"en": "aggregation_job", "fr": "aggregation_job"}, "t": {"en": "4. Flink aggregation_job", "fr": "4. Job Flink aggregation_job"}, "d": {"en": "A second Flink job groups the readings into 30-second windows and computes the average, minimum, maximum and standard deviation for each sensor. The results go to the aggregations table.", "fr": "Un second job Flink regroupe les mesures par fenêtres de 30 secondes et calcule la moyenne, le minimum, le maximum et l'écart-type de chaque capteur. Les résultats vont dans la table aggregations."}}, {"s": {"en": "ClickHouse", "fr": "ClickHouse"}, "t": {"en": "5. ClickHouse storage", "fr": "5. Stockage ClickHouse"}, "d": {"en": "Three MergeTree tables hold the data: raw_readings keeps the full history, aggregations keeps the 30-second statistics and alerts keeps the HIGH and CRITICAL events. Pre-computing the aggregations keeps the dashboard queries fast. After several hours the platform held about 703,000 readings.", "fr": "Trois tables MergeTree contiennent les données : raw_readings garde tout l'historique, aggregations les statistiques par 30 secondes et alerts les événements HIGH et CRITICAL. Pré-calculer les agrégations garde les requêtes du tableau de bord rapides. Après plusieurs heures, la plateforme contenait environ 703 000 mesures."}}, {"s": {"en": "Grafana", "fr": "Grafana"}, "t": {"en": "6. Grafana dashboard", "fr": "6. Tableau de bord Grafana"}, "d": {"en": "The Supervision IoT dashboard has 9 panels and refreshes every 5 seconds. It queries ClickHouse through its plugin and shows the sensor curves, the latest alerts, anomalies by type and by zone, and sensor health.", "fr": "Le tableau de bord Supervision IoT compte 9 panels et se rafraîchit toutes les 5 secondes. Il interroge ClickHouse via son plugin et affiche les courbes des capteurs, les dernières alertes, les anomalies par type et par zone, et l'état des capteurs."}}], "rag": [{"s": {"en": "CI runner", "fr": "Runner CI"}, "t": {"en": "1. GitHub Actions runner", "fr": "1. Runner GitHub Actions"}, "d": {"en": "My code lives on GitHub. A GitHub Actions workflow runs on a self-hosted runner that can reach the Kind Kubernetes cluster, which is where all the services of the platform run.", "fr": "Mon code est sur GitHub. Un workflow GitHub Actions s'exécute sur un runner auto-hébergé qui accède au cluster Kubernetes Kind, où tourne l'ensemble des services de la plateforme."}}, {"s": {"en": "Training", "fr": "Entraînement"}, "t": {"en": "2. Churn model training", "fr": "2. Entraînement du modèle de churn"}, "d": {"en": "train_pipeline.py prepares the customer-churn data (19 features, 46 columns once encoded), trains the model and logs the run.", "fr": "train_pipeline.py prépare les données de churn clients (19 variables, 46 colonnes après encodage), entraîne le modèle et enregistre le run."}}, {"s": {"en": "MLflow", "fr": "MLflow"}, "t": {"en": "3. MLflow tracking and registry", "fr": "3. Suivi et registre MLflow"}, "d": {"en": "MLflow records the parameters and metrics of every run. The best model, a logistic regression, is the champion and is registered as version 1 in the model registry.", "fr": "MLflow enregistre les paramètres et les métriques de chaque run. Le meilleur modèle, une régression logistique, est le champion et est enregistré en version 1 dans le registre de modèles."}, "x": "accuracy 0.802  |  weighted F1 0.798  |  ROC-AUC 0.849"}, {"s": {"en": "FAISS", "fr": "FAISS"}, "t": {"en": "4. Documents and FAISS index", "fr": "4. Documents et index FAISS"}, "d": {"en": "For the RAG assistant, documents are turned into vectors and stored in a FAISS index. When a question arrives, the closest passages are retrieved from that index.", "fr": "Pour l'assistant RAG, les documents sont transformés en vecteurs et stockés dans un index FAISS. Quand une question arrive, les passages les plus proches sont récupérés dans cet index."}}, {"s": {"en": "phi3:mini", "fr": "phi3:mini"}, "t": {"en": "5. phi3:mini on Ollama", "fr": "5. phi3:mini sur Ollama"}, "d": {"en": "The retrieved passages and the question are sent to phi3:mini, a small language model that runs locally with Ollama, and it writes the answer.", "fr": "Les passages récupérés et la question sont envoyés à phi3:mini, un petit modèle de langage exécuté localement avec Ollama, qui rédige la réponse."}}, {"s": {"en": "FastAPI", "fr": "FastAPI"}, "t": {"en": "6. FastAPI", "fr": "6. FastAPI"}, "d": {"en": "FastAPI is the API layer between the models and the interface. It serves churn predictions from the registered model and the answers of the RAG assistant.", "fr": "FastAPI est la couche API entre les modèles et l'interface. Elle sert les prédictions de churn du modèle enregistré et les réponses de l'assistant RAG."}}, {"s": {"en": "Streamlit", "fr": "Streamlit"}, "t": {"en": "7. Streamlit interface", "fr": "7. Interface Streamlit"}, "d": {"en": "Streamlit is the web interface where a user asks questions to the assistant and sees the predictions and answers.", "fr": "Streamlit est l'interface web où l'utilisateur pose ses questions à l'assistant et voit les prédictions et les réponses."}}]};
+
+  function mkpath(pts,c){ var len=[0],tot=0,i; for(i=1;i<pts.length;i++){ var a=pts[i-1],b=pts[i]; tot+=Math.sqrt(Math.pow(b[0]-a[0],2)+Math.pow(b[1]-a[1],2)+Math.pow(b[2]-a[2],2)); len.push(tot); } return {pts:pts,len:len,tot:tot,c:c}; }
+  function scenePipe(){
+    var S=[],Wr=[],i,Gy="#9ca3af",TEAL="#0d9488",AMB="#f59e0b";
+    function A(o,st){ o.st=st; S.push(o); }
+    function wr(pts,c,r){ Wr.push({pts:pts,c:c||Gy,r:r||.05}); }
+    var lane=[{z:3,c:"#ef4444"},{z:1,c:"#8b5cf6"},{z:-1,c:"#3b82f6"},{z:-3,c:"#eab308"}];
+    A(boxS(-6,.05,0,3.8,.1,8.6,"#374151",{nx:2,nz:9}),1);
+    lane.forEach(function(l){ A(boxS(-10.5,.4,l.z,.9,.8,.9,l.c),0); A(cylS(-10.5,.95,l.z,.26,.3,12,"#f3f4f6","y"),0);
+      A(cylS(-6,.55,l.z,.38,3.2,16,l.c,"x","#1f2937"),1); });
+    A(boxS(-.8,.5,2.4,2.4,1,2,"#d6336c",{top:"#e8588a"}),2); A(cylS(-.8,1.3,2.4,.55,.6,3,AMB,"y"),2);
+    A(boxS(-.8,.5,-2.4,2.4,1,2,"#d6336c",{top:"#e8588a"}),3); [1.1,1.3,1.5].forEach(function(y,k){ A(boxS(-.8,y,-2.4,1.6-k*.2,.12,1.2,"#fde68a"),3); });
+    [[3.8,0],[1.4,1],[-2.4,0]].forEach(function(t){ A(cylS(4.4,.7,t[0],.9,1.4,22,"#f5c400","y",t[1]?"#ef4444":"#fde047"),4); A(cylS(4.4,.4,t[0],.93,.08,22,"#b8860b","y"),4); A(cylS(4.4,.95,t[0],.93,.08,22,"#b8860b","y"),4); });
+    A(boxS(9.4,.2,0,1.8,.3,.9,"#374151"),5); A(boxS(9.4,1.9,0,5,3.2,.3,"#f46800"),5); A(boxS(9.4,1.9,-.18,4.7,2.9,.05,"#111827"),5);
+    var pc=["#22c55e","#3b82f6","#f59e0b","#ef4444","#8b5cf6","#14b8a6","#f97316","#06b6d4","#eab308"];
+    for(i=0;i<9;i++) A(boxS(9.4+((i%3)-1)*1.5,1.9+(1-Math.floor(i/3))*.95,-.22,1.3,.8,.04,pc[i]),5);
+    lane.forEach(function(l){ wr([[-10,.15,l.z],[-7.7,.15,l.z]]); wr([[-4.4,.15,l.z],[-2.6,.15,l.z],[-2.6,.15,2.4],[-2,.15,2.4]]); wr([[-2.6,.15,l.z],[-2.6,.15,-2.4],[-2,.15,-2.4]]); });
+    wr([[.4,.15,2.4],[2,.15,2.4],[2,.15,3.8],[3.5,.15,3.8]]); wr([[2,.15,2.4],[2,.15,1.4],[3.5,.15,1.4]],AMB,.06); wr([[.4,.15,-2.4],[3.5,.15,-2.4]]);
+    [3.8,1.4,-2.4].forEach(function(z){ wr([[5.3,.15,z],[6.2,.15,z],[6.2,.15,0],[6.8,.15,0]]); });
+    var paths=[],P=[];
+    lane.forEach(function(l){ var st=[[-10,.5,l.z],[-7.7,.5,l.z],[-4.4,.5,l.z],[-2.6,.5,l.z]], gr=function(z){ return [[6.2,.5,z],[6.2,.5,0],[7.2,.5,0]]; };
+      var kinds=[ [[-2.6,.5,2.4],[-.8,.5,2.4],[2,.5,2.4],[2,.5,3.8],[4.4,.5,3.8]].concat(gr(3.8)), [[-2.6,.5,2.4],[-.8,.5,2.4],[2,.5,2.4],[2,.5,1.4],[4.4,.5,1.4]].concat(gr(1.4)), [[-2.6,.5,-2.4],[-.8,.5,-2.4],[4.4,.5,-2.4]].concat(gr(-2.4)) ];
+      kinds.forEach(function(k,ki){ var idx=paths.length; paths.push(mkpath(st.concat(k),ki===1?AMB:TEAL)); var n=ki===1?1:(ki===0?3:2); for(var j=0;j<n;j++) P.push({u:Math.random(),s:.028+Math.random()*.012,pi:idx}); }); });
+    var steps=[{rect:[-11.6,-4.3,-9.4,4.3]},{rect:[-8,-4.6,-4,4.6]},{rect:[-2.3,1.2,.7,3.6]},{rect:[-2.3,-3.6,.7,-1.2]},{rect:[3.2,-3.6,5.6,5]},{rect:[6.8,-1.4,12,1.4]}];
+    var L=[{n:1,p:[-10.5,1.7,3]},{n:2,p:[-6,1.4,4.4]},{n:3,p:[-.8,2.2,2.4]},{n:4,p:[-.8,2.2,-2.4]},{n:5,p:[4.4,2.2,-2.4]},{n:6,p:[9.4,4,0]},
+      {k:null,t:"raw_readings",p:[4.4,1.9,3.8]},{k:null,t:"alerts",p:[4.4,1.9,1.4]},{k:null,t:"aggregations",p:[4.4,1.9,-4]}];
+    return {solid:true,solids:S,wires:Wr,labels:L,particles:P,paths:paths,steps:steps,slab:[[-12.4,-.02,-5.6],[12.8,-.02,-5.6],[12.8,-.02,6],[-12.4,-.02,6]],D:32,fw:27,fh:13,figs:false,idea:false,yaw:-.32,pitch:.72};
+  }
+
   function sceneRag(){
-    var X=[-9,-5.4,-1.8,1.8,5.4,9],shapes=[],L=[],i;
-    for(i=0;i<3;i++) shapes.push(sh(box(1.1,.32,1.4,X[0],-1+i*.7,0),"--text",.9));            /* documents */
-    shapes.push(sh(box(1.4,1.4,1.4,X[1],0,0),"--accent",.9)); shapes.push(sh(octa(.7,X[1],0,0),"--accent",.6)); /* embeddings */
-    shapes.push(sh(circle(1.6,26,X[2],0,0,"z"),"--muted",.7)); shapes.push(sh(circle(1.6,26,X[2],0,0,"y"),"--muted",.7)); /* FAISS index */
-    var vec=[];for(i=0;i<22;i++) vec.push([X[2]+(Math.random()*2-1)*1.2,(Math.random()*2-1)*1.2,(Math.random()*2-1)*1.2]);
-    shapes.push(sh(circle(1.05,20,X[3],0,0,"y"),"--warn",1)); shapes.push(sh(circle(1.05,20,X[3],0,0,"z"),"--warn",1)); shapes.push(sh(circle(1.05,20,X[3],0,0,"x"),"--warn",1)); /* phi3:mini */
-    shapes.push(sh(box(1.3,1.3,.5,X[4],0,0),"--text",.9)); shapes.push(sh(box(.7,.7,.5,X[4],0,0),"--accent",.7)); /* FastAPI */
-    shapes.push(sh(box(1.7,1.2,.2,X[5],0,0),"--text",.9)); shapes.push(sh(box(.7,.1,.2,X[5],-.9,0),"--text",.9)); /* Streamlit */
-    shapes.push(sh({v:[[X[0]+.8,0,0],[X[5]-1,0,0]],e:[[0,1]]},"--muted",.4));
-    var names=["Documents","Embeddings","FAISS","Ollama phi3:mini","FastAPI","Streamlit"], ys=[1.6,2.7,2.3,1.8,2.7,1.6];
-    L=names.map(function(n,k){ return {k:null,t:n,p:[X[k],ys[k],0]}; });
-    var P=[];for(i=0;i<40;i++) P.push({u:Math.random(),y:(Math.random()*2-1)*.7,z:(Math.random()*2-1)*.5,an:false,s:.04+Math.random()*.04});
-    return {shapes:shapes,labels:L,particles:P,flow:function(p){ return [-8.2+p.u*16.4,p.y,p.z]; },
-      anomaly:function(){return false;},vec:vec,D:27,figs:false,idea:false};
+    var S=[],Wr=[],i,Gy="#9ca3af",TEAL="#0d9488",VIO="#7c3aed";
+    function A(o,st){ o.st=st; S.push(o); }
+    function wr(pts,c,r){ Wr.push({pts:pts,c:c||Gy,r:r||.05}); }
+    A(boxS(-12.5,.8,0,1.4,1.6,1.4,"#24292f"),0); A(cylS(-12.5,1.65,0,.4,.1,14,"#ffffff","y"),0);
+    A(cylS(-9.6,.3,0,.95,.5,10,"#16a34a","y","#22c55e"),0); A(cylS(-9.6,.62,0,.35,.2,10,"#dcfce7","y"),0);
+    for(i=0;i<3;i++) A(cylS(-5.2,.25+i*.5,3,.9,.4,18,"#94a3b8","y","#cbd5e1"),1);
+    A(boxS(-1.5,.5,3,1.9,1,1.9,"#6366f1",{top:"#818cf8"}),1); A(cylS(-1.5,1.3,3,.5,.5,3,"#e0e7ff","y"),1);
+    A(boxS(2.8,.6,3,2.3,1.2,2,"#0194e2",{top:"#38b6f5"}),2); A(cylS(2.3,1.5,3,.4,.5,14,"#bae6fd","y"),2); A(cylS(3.4,1.5,3,.4,.5,14,"#bae6fd","y"),2); A(cylS(2.8,2.1,3,.28,.1,5,"#fbbf24","y"),2);
+    [0,1,2].forEach(function(k){ A(boxS(-5.2,.15+k*.3,-3,1.3,.25,1.6,k%2?"#e2e8f0":"#f8fafc",{top:"#ffffff"}),3); });
+    A(cylS(-1.5,.7,-3,1.2,1.4,22,VIO,"y","#a78bfa"),3);
+    [[-.5,.9],[.4,-.6],[-.9,-.5],[.7,.7],[0,0],[-.4,-1]].forEach(function(v){ A(boxS(-1.5+v[0],1.5,-3+v[1],.2,.12,.2,"#ede9fe"),3); });
+    A(boxS(2.8,.7,-3,2.2,1.4,2,"#1f2937"),4); A(cylS(2.8,1.45,-3,.6,.1,16,"#f59e0b","y"),4);
+    A(boxS(7.2,.6,0,2.2,1.2,2.4,"#059669",{top:"#34d399"}),5); A(cylS(7.2,1.4,0,.5,.5,3,"#d1fae5","y"),5);
+    A(boxS(11,.2,0,1.6,.3,.9,"#374151"),6); A(boxS(11,1.4,0,3.4,2.2,.25,"#1f2937"),6); A(boxS(11,1.4,-.14,3.1,1.9,.04,"#ff4b4b"),6);
+    A(boxS(10.6,1.8,-.18,1.7,.14,.02,"#ffffff"),6); A(boxS(10.9,1.45,-.18,2.2,.14,.02,"#ffe4e6"),6); A(boxS(11.1,1.1,-.18,1.4,.14,.02,"#ffffff"),6);
+    wr([[-8.6,.15,0],[-7,.15,0],[-7,.15,3],[-6.2,.15,3]],"#16a34a",.06); wr([[-7,.15,0],[-7,.15,-3],[-6.2,.15,-3]],"#16a34a",.06);
+    wr([[-4.2,.15,3],[-2.5,.15,3]]); wr([[-.5,.15,3],[1.6,.15,3]]); wr([[4,.15,3],[5.4,.15,3],[5.4,.15,.6],[6.1,.15,.6]]);
+    wr([[-4.5,.15,-3],[-2.7,.15,-3]]); wr([[-.3,.15,-3],[1.7,.15,-3]]); wr([[3.9,.15,-3],[5.4,.15,-3],[5.4,.15,-.6],[6.1,.15,-.6]]); wr([[8.3,.15,0],[9.3,.15,0]]);
+    var paths=[mkpath([[-5.2,.5,3],[-1.5,.5,3],[2.8,.5,3],[5.4,.5,3],[5.4,.5,.6],[7.2,.5,.6],[7.2,.5,0],[9.6,.5,0]],TEAL),
+               mkpath([[-5.2,.5,-3],[-1.5,.5,-3],[2.8,.5,-3],[5.4,.5,-3],[5.4,.5,-.6],[7.2,.5,-.6],[7.2,.5,0],[9.6,.5,0]],VIO)],P=[];
+    for(i=0;i<22;i++) P.push({u:Math.random(),s:.03+Math.random()*.012,pi:i%2});
+    var steps=[{rect:[-13.5,-1.8,-8.4,1.8]},{rect:[-6.5,1.5,-.3,4.6]},{rect:[1.4,1.8,4.3,4.2]},{rect:[-6.5,-4.6,-.3,-1.4]},{rect:[1.6,-4.3,4.1,-1.7]},{rect:[5.9,-1.8,8.5,1.8]},{rect:[9.2,-2.2,12.8,2.2]}];
+    var L=[{n:1,p:[-10.8,1.9,0]},{n:2,p:[-1.5,2.2,3]},{n:3,p:[2.8,2.9,3]},{n:4,p:[-1.5,2.1,-3]},{n:5,p:[2.8,2.3,-3]},{n:6,p:[7.2,2.3,0]},{n:7,p:[11,3.1,0]},
+      {k:null,t:"Churn data",p:[-5.2,1.9,3]},{k:null,t:"Documents",p:[-5.2,1.3,-3]},{k:null,t:"Kind Kubernetes cluster",p:[4.5,.2,-5.7]}];
+    return {solid:true,solids:S,wires:Wr,labels:L,particles:P,paths:paths,steps:steps,
+      zones:[{rect:[-7.4,-5.6,12.9,5.6],f:"#dbe9fb",s:"#7aa5e0"}],
+      slab:[[-14.4,-.02,-6.2],[13.6,-.02,-6.2],[13.6,-.02,6.4],[-14.4,-.02,6.4]],D:33,fw:29,fh:13.5,figs:false,idea:false,yaw:-.32,pitch:.72};
   }
   var SC={glasses:sceneGlasses(),pipe:scenePipe(),elec:sceneElec(),rag:sceneRag()}, cur="glasses", sc=SC.glasses;
   var spans=[];
   function setScene(k){
-    cur=k; sc=SC[k]; yaw=sc.yaw!==undefined?sc.yaw:-.5; pitch=sc.pitch!==undefined?sc.pitch:.28; vy=0; lab.innerHTML=""; spans=sc.labels.map(function(l){ var s=document.createElement("span"); lab.appendChild(s); return s; });
+    cur=k; sc=SC[k]; activeStep=0; yaw=sc.yaw!==undefined?sc.yaw:-.5; pitch=sc.pitch!==undefined?sc.pitch:.28; vy=0; lab.innerHTML=""; spans=sc.labels.map(function(l){ var s=document.createElement("span"); lab.appendChild(s); return s; });
     idea.style.display = sc.idea ? "block" : "none"; figs.style.display = sc.figs ? "" : "none";
     document.querySelectorAll(".tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-tab")===k ? "true":"false"); });
-    D=sc.D; wrap.style.height = sc.solid ? (window.innerWidth<640?"400px":"470px") : ""; resize(); text(); draw(0); if(!reduce) start();
+    D=sc.D; wrap.style.height = sc.solid ? (window.innerWidth<640?"400px":"470px") : ""; resize(); text(); autoplay(); draw(0); if(!reduce) start();
   }
+  var activeStep=0, apT=0;
+  function lang(){ return document.documentElement.lang==="fr"?"fr":"en"; }
+  function stepName(l){ var st=STEPS[cur]&&STEPS[cur][l.n-1]; return st?st.s[lang()]:""; }
   function text(){
-    var t=T[document.documentElement.lang]||T.en; cap.textContent=t["cap_"+cur]; if(sc.solid&&W<560) cap.textContent += " " + sc.labels.map(function(l){ return l.k ? t[l.k] : l.t; }).join(" · ");
-    sc.labels.forEach(function(l,i){ spans[i].textContent = l.k ? t[l.k] : l.t; });
+    var t=T[document.documentElement.lang]||T.en; cap.textContent=t["cap_"+cur];
+    if(sc.solid&&W<560&&!sc.steps) cap.textContent += " " + sc.labels.map(function(l){ return l.k ? t[l.k] : l.t; }).join(" \u00b7 ");
+    var small=sc.solid&&W<560;
+    sc.labels.forEach(function(l,i){ var nm=l.n?stepName(l):(l.k?t[l.k]:l.t); spans[i].textContent = l.n ? (small ? String(l.n) : l.n+" \u00b7 "+nm) : nm; spans[i].classList.toggle("active", !!l.n && l.n-1===activeStep); });
     wrap.setAttribute("aria-label", cap.textContent);
+    renderSteps();
   }
+  function renderSteps(){
+    var box=document.getElementById("shsteps"), chips=document.getElementById("shchips"), card=document.getElementById("shcard");
+    var list=STEPS[cur]; if(!sc.steps||!list){ box.style.display="none"; return; }
+    box.style.display="block"; var L=lang(); chips.innerHTML="";
+    list.forEach(function(st,i){ var b=document.createElement("button"); b.type="button"; b.setAttribute("aria-current", i===activeStep?"true":"false");
+      b.innerHTML="<b>"+(i+1)+"</b>"; b.appendChild(document.createTextNode(st.s[L])); b.addEventListener("click",function(){ clearInterval(apT); selectStep(i); }); chips.appendChild(b); });
+    var st=list[activeStep]; card.innerHTML=""; var h=document.createElement("h3"); h.textContent=st.t[L]; var p=document.createElement("p"); p.textContent=st.d[L]; card.appendChild(h); card.appendChild(p);
+    if(st.x){ var pre=document.createElement("pre"); pre.textContent=st.x; card.appendChild(pre); }
+  }
+  function selectStep(i){ activeStep=i; text(); draw(t0); }
+  function autoplay(){ clearInterval(apT); if(reduce||!sc.steps) return; apT=setInterval(function(){ if(!vis||document.hidden||drag) return; selectStep((activeStep+1)%STEPS[cur].length); },5500); }
   function resize(){ var r=wrap.getBoundingClientRect(); dpr=Math.min(window.devicePixelRatio||1,2); W=r.width; H=r.height;
     canvas.width=W*dpr; canvas.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
-    F=Math.min(W*D/(cur==="rag"?24:17.5), H*D/9.2); if(sc.solid) F=Math.min(W*D/23.5,H*D/12.5); if(cur==="glasses") F=Math.min(W*D/11.5,H*D/6.6); }
+    F=Math.min(W*D/(cur==="rag"?24:17.5), H*D/9.2); if(sc.solid) F=Math.min(W*D/(sc.fw||23.5),H*D/(sc.fh||12.5)); if(cur==="glasses") F=Math.min(W*D/11.5,H*D/6.6); }
   function proj(p){ var cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
     var x1=cy*p[0]+sy*p[2], z1=-sy*p[0]+cy*p[2], y2=cp*p[1]+sp*z1, z2=-sp*p[1]+cp*z1, zz=z2+D, k=F/zz;
     return {x:W/2+x1*k, y:H/2-y2*k, z:zz, k:k, vx:x1, vy:y2, vz:z2}; }
   function fade(z){ return Math.max(.3,Math.min(1,1.2-(z-D)/16)); }
   function labelsPos(){
-    var small = sc.solid && W<560; lab.style.display = small ? "none" : ""; if(small) return;
-    sc.labels.forEach(function(l,i){ var q=proj(l.p); var hw=spans[i].offsetWidth/2+4; spans[i].style.left=Math.max(hw,Math.min(W-hw,q.x))+"px"; spans[i].style.top=Math.max(22,q.y)+"px"; });
+    var small = sc.solid && W<560;
+    sc.labels.forEach(function(l,i){ if(small&&!l.n){ spans[i].style.display="none"; return; } spans[i].style.display=""; var q=proj(l.p); var hw=spans[i].offsetWidth/2+4; spans[i].style.left=Math.max(hw,Math.min(W-hw,q.x))+"px"; spans[i].style.top=Math.max(22,q.y)+"px"; });
   }
   function drawSolid(){
     ctx.clearRect(0,H*0,W,H); ctx.globalAlpha=1;
     var Ls=[-.35,.65,-.67],items=[],sp=sc.slab.map(proj);
     ctx.beginPath(); sp.forEach(function(q,i){ i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y); }); ctx.closePath();
     ctx.fillStyle="#eceff3"; ctx.fill(); ctx.strokeStyle="#c9ced6"; ctx.lineWidth=1; ctx.stroke();
+    function rectPath(r,y){ ctx.beginPath(); [[r[0],r[1]],[r[2],r[1]],[r[2],r[3]],[r[0],r[3]]].forEach(function(c,i){ var q=proj([c[0],y,c[1]]); i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y); }); ctx.closePath(); }
+    (sc.zones||[]).forEach(function(z){ rectPath(z.rect,.0); ctx.fillStyle=z.f; ctx.fill(); ctx.strokeStyle=z.s; ctx.lineWidth=1.5; ctx.stroke(); });
+    var act=sc.steps?activeStep:-1;
+    if(act>=0){ rectPath(sc.steps[act].rect,.03); ctx.fillStyle="rgba(245,158,11,.20)"; ctx.fill(); ctx.strokeStyle="#f59e0b"; ctx.lineWidth=2.5; ctx.setLineDash([8,5]); ctx.stroke(); ctx.setLineDash([]); }
     sc.solids.forEach(function(so){ var cv=proj(so.ctr);
       so.f.forEach(function(f){ var P=f.v.map(proj),n=P.length,ax=P[1].vx-P[0].vx,ay=P[1].vy-P[0].vy,az=P[1].vz-P[0].vz,bx=P[2].vx-P[0].vx,by=P[2].vy-P[0].vy,bz=P[2].vz-P[0].vz;
         var nx=ay*bz-az*by,ny=az*bx-ax*bz,nz=ax*by-ay*bx,cx=0,cy=0,cz=0,i;
@@ -936,20 +1001,20 @@ document.getElementById("theme").onclick = function(){
         if(nx*(cx-cv.vx)+ny*(cy-cv.vy)+nz*(cz-cv.vz)<0){ nx=-nx; ny=-ny; nz=-nz; }
         if(nz>0) return;
         var nl=Math.sqrt(nx*nx+ny*ny+nz*nz)||1, lit=(nx*Ls[0]+ny*Ls[1]+nz*Ls[2])/nl;
-        items.push({d:cz,t:0,P:P,c:shadeC(f.c,.5+.55*Math.max(0,lit))}); }); });
+        var hk=act<0||so.st===undefined?1:(so.st===act?1.2:.88); items.push({d:cz,t:0,P:P,c:shadeC(f.c,(.5+.55*Math.max(0,lit))*hk)}); }); });
     sc.wires.forEach(function(w){ for(var i=1;i<w.pts.length;i++){ var a=w.pts[i-1],b=w.pts[i],dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2],
         m=Math.max(1,Math.ceil(Math.sqrt(dx*dx+dy*dy+dz*dz)/1.1));
       for(var j=0;j<m;j++){ var p0=proj([a[0]+dx*j/m,a[1]+dy*j/m,a[2]+dz*j/m]),p1=proj([a[0]+dx*(j+1)/m,a[1]+dy*(j+1)/m,a[2]+dz*(j+1)/m]);
         items.push({d:(p0.vz+p1.vz)/2-.7,t:1,a:p0,b:p1,c:w.c,w:w.r*2*p0.k}); } } });
-    sc.particles.forEach(function(p){ p.u=(p.u+p.s*.016*(reduce?0:1))%1; var d=p.u*sc.tot,k=1; while(k<sc.len.length-1&&sc.len[k]<d) k++;
-      var f=(d-sc.len[k-1])/Math.max(.001,sc.len[k]-sc.len[k-1]),a=sc.path[k-1],b=sc.path[k],q=proj([a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f+.12,a[2]+(b[2]-a[2])*f]);
-      items.push({d:q.vz-1.2,t:2,q:q}); });
+    sc.particles.forEach(function(p){ var pa=sc.paths[p.pi||0]; p.u=(p.u+p.s*.016*(reduce?0:1))%1; var d=p.u*pa.tot,k=1; while(k<pa.len.length-1&&pa.len[k]<d) k++;
+      var f=(d-pa.len[k-1])/Math.max(.001,pa.len[k]-pa.len[k-1]),a=pa.pts[k-1],b=pa.pts[k],q=proj([a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f+.12,a[2]+(b[2]-a[2])*f]);
+      items.push({d:q.vz-1.2,t:2,q:q,c:pa.c}); });
     items.sort(function(a,b){ return b.d-a.d; });
     ctx.lineCap="round"; ctx.lineJoin="round";
     items.forEach(function(it){
       if(it.t===0){ ctx.beginPath(); it.P.forEach(function(q,i){ i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y); }); ctx.closePath(); ctx.fillStyle=it.c; ctx.fill(); ctx.strokeStyle=it.c; ctx.lineWidth=.7; ctx.stroke(); }
       else if(it.t===1){ ctx.strokeStyle=it.c; ctx.lineWidth=Math.max(1.5,it.w); ctx.beginPath(); ctx.moveTo(it.a.x,it.a.y); ctx.lineTo(it.b.x,it.b.y); ctx.stroke(); }
-      else { ctx.fillStyle="#fbbf24"; ctx.strokeStyle="#b45309"; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(it.q.x,it.q.y,3.2,0,6.3); ctx.fill(); ctx.stroke(); } });
+      else { ctx.fillStyle=it.c; ctx.strokeStyle="rgba(0,0,0,.55)"; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(it.q.x,it.q.y,Math.max(2.6,.13*it.q.k),0,6.3); ctx.fill(); ctx.stroke(); } });
     labelsPos();
   }
   function draw(t){
