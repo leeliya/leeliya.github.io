@@ -251,6 +251,13 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
       </article>
 
       <article class="card reveal">
+        <span class="kind" data-i18n="p11_kind">MLOps and LLMOps, internship project</span>
+        <h3 data-i18n="p11_t">Nexus-Ops: MLOps and LLMOps platform</h3>
+        <p data-i18n="p11_d">A platform I built at 3D Smart Factory that brings machine learning and LLM work onto one Kubernetes cluster. A customer-churn model is trained and tracked with MLflow (the logistic regression champion reached 0.85 ROC-AUC), and a RAG assistant answers questions using a FAISS index and phi3:mini on Ollama, served by FastAPI with a Streamlit interface. The stack runs on Kind Kubernetes with a GitHub Actions self-hosted runner, and I wrote it up as my engineering project report.</p>
+        <div class="tags"><span class="tag">MLflow</span><span class="tag">Kubernetes</span><span class="tag">FAISS</span><span class="tag">Ollama</span><span class="tag">FastAPI</span><span class="tag">Streamlit</span><span class="tag">GitHub Actions</span></div>
+      </article>
+
+      <article class="card reveal">
         <span class="kind" data-i18n="p10_kind">Full-stack, professional project</span>
         <h3 data-i18n="p10_t">Web platform for a client company</h3>
         <p data-i18n="p10_d">A full-stack web application built for a company during a professional project, with Next.js, React, TypeScript, Tailwind CSS, Prisma and API routes. It is covered by a non-disclosure agreement, so I cannot share its details or code. I am happy to discuss the technical choices in general terms.</p>
@@ -331,10 +338,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 /* ---------- text, in two languages ---------- */
 var T = {
   en:{nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
-    tab_glasses:"Smart glasses",tab_pipe:"IoT pipeline",tab_rag:"RAG for CAD files",
+    tab_glasses:"Smart glasses",tab_pipe:"IoT pipeline",tab_rag:"Nexus-Ops RAG",
     cap_glasses:"Wireframe of my smart glasses: frame, camera module and electronics housings on the temples.",
     cap_pipe:"Sensors to Kafka, Flink, ClickHouse and Grafana. Amber dots are anomalies.",
-    cap_rag:"Concept: CAD files are parsed, embedded and searched so an LLM can answer mechanical engineers' questions.",
+    cap_rag:"The RAG assistant of my Nexus-Ops platform: documents are embedded, searched in a FAISS index, and answered by phi3:mini on Ollama through FastAPI and Streamlit.",
     idea:"An idea I want to build, not a finished project",hint:"Drag to rotate",
     fig1:"The real CATIA V5 assembly of the glasses (from my project report).",
     fig2:"Block diagram of the electronics: power, ESP32-CAM, Wi-Fi link and three buttons.",
@@ -379,6 +386,9 @@ var T = {
     p9_kind:"Systems, command-line tool",
     p9_t:"MAPC: a code performance monitor",
     p9_d:"A command-line tool written in Bash that measures how a program behaves and reports where it is slow. It profiles execution time, memory (with Valgrind) and system calls (with strace), and can run the analysis in forked processes, threads or an isolated subshell. Reports come out as text, HTML, JSON or CSV, and a run can be compared with an earlier one. It has timestamped logging, admin-only options and clear error codes.",
+    p11_kind:"MLOps and LLMOps, internship project",
+    p11_t:"Nexus-Ops: MLOps and LLMOps platform",
+    p11_d:"A platform I built at 3D Smart Factory that brings machine learning and LLM work onto one Kubernetes cluster. A customer-churn model is trained and tracked with MLflow (the logistic regression champion reached 0.85 ROC-AUC), and a RAG assistant answers questions using a FAISS index and phi3:mini on Ollama, served by FastAPI with a Streamlit interface. The stack runs on Kind Kubernetes with a GitHub Actions self-hosted runner, and I wrote it up as my engineering project report.",
     p10_kind:"Full-stack, professional project",
     p10_t:"Web platform for a client company",
     p10_d:"A full-stack web application built for a company during a professional project, with Next.js, React, TypeScript, Tailwind CSS, Prisma and API routes. It is covered by a non-disclosure agreement, so I cannot share its details or code. I am happy to discuss the technical choices in general terms.",
@@ -389,10 +399,10 @@ var T = {
     foot:"Layla El Hajjaji, Mohammedia, Morocco",
     words:["data pipelines","microservices","AI agents","IoT systems"]},
   fr:{nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
-    tab_glasses:"Lunettes intelligentes",tab_pipe:"Pipeline IoT",tab_rag:"RAG pour fichiers CAO",
+    tab_glasses:"Lunettes intelligentes",tab_pipe:"Pipeline IoT",tab_rag:"RAG Nexus-Ops",
     cap_glasses:"Fil de fer de mes lunettes : monture, module caméra et boîtiers électroniques sur les branches.",
     cap_pipe:"Des capteurs vers Kafka, Flink, ClickHouse et Grafana. Les points ambre sont des anomalies.",
-    cap_rag:"Concept : les fichiers CAO sont analysés, vectorisés et interrogés pour qu'un LLM réponde aux questions des ingénieurs mécaniciens.",
+    cap_rag:"L'assistant RAG de ma plateforme Nexus-Ops : les documents sont vectorisés, recherchés dans un index FAISS, puis phi3:mini sur Ollama répond via FastAPI et Streamlit.",
     idea:"Une idée que je veux réaliser, pas un projet terminé",hint:"Faites glisser pour tourner",
     fig1:"L'assemblage CATIA V5 réel des lunettes (extrait de mon rapport de projet).",
     fig2:"Schéma bloc de l'électronique : alimentation, ESP32-CAM, liaison Wi-Fi et trois boutons.",
@@ -437,6 +447,9 @@ var T = {
     p9_kind:"Systèmes, outil en ligne de commande",
     p9_t:"MAPC : un moniteur de performances du code",
     p9_d:"Un outil en ligne de commande écrit en Bash qui mesure le comportement d'un programme et indique où il est lent. Il analyse le temps d'exécution, la mémoire (avec Valgrind) et les appels système (avec strace), et peut lancer l'analyse dans des processus fork, des threads ou un sous-shell isolé. Les rapports sortent en texte, HTML, JSON ou CSV, et une exécution peut être comparée à une précédente. Il offre une journalisation horodatée, des options réservées à l'administrateur et des codes d'erreur clairs.",
+    p11_kind:"MLOps et LLMOps, projet de stage",
+    p11_t:"Nexus-Ops : plateforme MLOps et LLMOps",
+    p11_d:"Une plateforme que j'ai réalisée chez 3D Smart Factory pour réunir le machine learning et les LLM sur un même cluster Kubernetes. Un modèle de prédiction de churn est entraîné et suivi avec MLflow (la régression logistique retenue atteint 0,85 de ROC-AUC), et un assistant RAG répond grâce à un index FAISS et phi3:mini sur Ollama, exposé par FastAPI avec une interface Streamlit. L'ensemble tourne sur Kubernetes Kind avec un runner GitHub Actions auto-hébergé, et je l'ai rédigé dans mon rapport de projet d'ingénieur.",
     p10_kind:"Full-stack, projet professionnel",
     p10_t:"Plateforme web pour une entreprise cliente",
     p10_d:"Une application web full-stack réalisée pour une entreprise lors d'un projet professionnel, avec Next.js, React, TypeScript, Tailwind CSS, Prisma et des API routes. Elle est couverte par un accord de confidentialité : je ne peux donc pas en partager les détails ni le code. Je suis ravie d'en discuter les choix techniques en termes généraux.",
@@ -795,18 +808,20 @@ document.getElementById("theme").onclick = function(){
       anomaly:function(p){ return p.an && p.u>.5; },D:25,figs:false,idea:false};
   }
   function sceneRag(){
-    var shapes=[],L=[],i;
-    for(i=0;i<3;i++) shapes.push(sh(box(1.2,.35,1.5,-8,-1.1+i*.8,0),"--text",.9));       /* stack of CAD files */
-    shapes.push(sh(box(1.6,1.6,1.6,-4,0,0),"--accent",.9)); shapes.push(sh(octa(.8,-4,0,0),"--accent",.6));
-    var vec=[];for(i=0;i<26;i++){ vec.push([0+(Math.random()*2-1)*1.5,(Math.random()*2-1)*1.5,(Math.random()*2-1)*1.5]); }
-    shapes.push(sh(circle(1.9,28,0,0,0,"z"),"--muted",.6)); shapes.push(sh(circle(1.9,28,0,0,0,"y"),"--muted",.6));
-    shapes.push(sh(circle(1.2,20,4.4,0,0,"y"),"--warn",1)); shapes.push(sh(circle(1.2,20,4.4,0,0,"z"),"--warn",1)); shapes.push(sh(circle(1.2,20,4.4,0,0,"x"),"--warn",1));
-    shapes.push(sh(box(1.2,1.2,.3,8.4,0,0),"--text",.9)); shapes.push(sh(box(.7,.1,.3,8.4,-.9,0),"--text",.9));
-    shapes.push(sh({v:[[-7,0,0],[8.4,0,0]],e:[[0,1]]},"--muted",.4));
-    L=[{k:"l_cad",p:[-8,1.4,0]},{k:"l_parse",p:[-4,2.8,0]},{k:"l_vec",p:[0,2.4,0]},{k:"l_llm",p:[4.4,1.7,0]},{k:"l_eng",p:[8.4,2.8,0]}];
-    var P=[];for(i=0;i<40;i++) P.push({u:Math.random(),y:(Math.random()*2-1)*.8,z:(Math.random()*2-1)*.6,an:false,s:.04+Math.random()*.04});
-    return {shapes:shapes,labels:L,particles:P,flow:function(p){ var x=-7.4+p.u*15.2; return [x,p.y,p.z]; },
-      anomaly:function(){return false;},vec:vec,D:26,figs:false,idea:true};
+    var X=[-9,-5.4,-1.8,1.8,5.4,9],shapes=[],L=[],i;
+    for(i=0;i<3;i++) shapes.push(sh(box(1.1,.32,1.4,X[0],-1+i*.7,0),"--text",.9));            /* documents */
+    shapes.push(sh(box(1.4,1.4,1.4,X[1],0,0),"--accent",.9)); shapes.push(sh(octa(.7,X[1],0,0),"--accent",.6)); /* embeddings */
+    shapes.push(sh(circle(1.6,26,X[2],0,0,"z"),"--muted",.7)); shapes.push(sh(circle(1.6,26,X[2],0,0,"y"),"--muted",.7)); /* FAISS index */
+    var vec=[];for(i=0;i<22;i++) vec.push([X[2]+(Math.random()*2-1)*1.2,(Math.random()*2-1)*1.2,(Math.random()*2-1)*1.2]);
+    shapes.push(sh(circle(1.05,20,X[3],0,0,"y"),"--warn",1)); shapes.push(sh(circle(1.05,20,X[3],0,0,"z"),"--warn",1)); shapes.push(sh(circle(1.05,20,X[3],0,0,"x"),"--warn",1)); /* phi3:mini */
+    shapes.push(sh(box(1.3,1.3,.5,X[4],0,0),"--text",.9)); shapes.push(sh(box(.7,.7,.5,X[4],0,0),"--accent",.7)); /* FastAPI */
+    shapes.push(sh(box(1.7,1.2,.2,X[5],0,0),"--text",.9)); shapes.push(sh(box(.7,.1,.2,X[5],-.9,0),"--text",.9)); /* Streamlit */
+    shapes.push(sh({v:[[X[0]+.8,0,0],[X[5]-1,0,0]],e:[[0,1]]},"--muted",.4));
+    var names=["Documents","Embeddings","FAISS","Ollama phi3:mini","FastAPI","Streamlit"], ys=[1.6,2.7,2.3,1.8,2.7,1.6];
+    L=names.map(function(n,k){ return {k:null,t:n,p:[X[k],ys[k],0]}; });
+    var P=[];for(i=0;i<40;i++) P.push({u:Math.random(),y:(Math.random()*2-1)*.7,z:(Math.random()*2-1)*.5,an:false,s:.04+Math.random()*.04});
+    return {shapes:shapes,labels:L,particles:P,flow:function(p){ return [-8.2+p.u*16.4,p.y,p.z]; },
+      anomaly:function(){return false;},vec:vec,D:27,figs:false,idea:false};
   }
   var SC={glasses:sceneGlasses(),pipe:scenePipe(),rag:sceneRag()}, cur="glasses", sc=SC.glasses;
   var spans=[];
@@ -823,7 +838,7 @@ document.getElementById("theme").onclick = function(){
   }
   function resize(){ var r=wrap.getBoundingClientRect(); dpr=Math.min(window.devicePixelRatio||1,2); W=r.width; H=r.height;
     canvas.width=W*dpr; canvas.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
-    F=Math.min(W*D/(cur==="rag"?20.5:17.5), H*D/9.2); if(cur==="glasses") F=Math.min(W*D/11.5,H*D/6.6); }
+    F=Math.min(W*D/(cur==="rag"?24:17.5), H*D/9.2); if(cur==="glasses") F=Math.min(W*D/11.5,H*D/6.6); }
   function proj(p){ var cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
     var x1=cy*p[0]+sy*p[2], z1=-sy*p[0]+cy*p[2], y2=cp*p[1]+sp*z1, z2=-sp*p[1]+cp*z1, zz=z2+D, k=F/zz;
     return {x:W/2+x1*k, y:H/2-y2*k, z:zz, k:k}; }
