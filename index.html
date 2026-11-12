@@ -135,6 +135,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 .sw.line{width:20px;height:4px;border-radius:2px;border:0}
 .sw.blk{width:14px;height:14px;border-radius:4px}
 /* ---------- 3D showcase ---------- */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:0 0 12px;background:var(--surface)}
+.seg[hidden]{display:none}
+.seg button{font:inherit;font-size:.82rem;border:0;background:transparent;color:var(--muted);padding:5px 16px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent-text);font-weight:600}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .tabs button{font:inherit;font-size:.88rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);
   border-radius:999px;padding:6px 16px;cursor:pointer}
@@ -303,9 +307,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-tab="glasses" data-i18n="tab_glasses">Smart glasses</button>
       <button role="tab" aria-selected="false" data-tab="pipe" data-i18n="tab_pipe">IoT pipeline</button>
-      <button role="tab" aria-selected="false" data-tab="elec" data-i18n="tab_elec">Electronics</button>
       <button role="tab" aria-selected="false" data-tab="rag" data-i18n="tab_rag">RAG for CAD files</button>
     </div>
+    <div class="seg" id="shseg" hidden><button type="button" data-view="glasses" aria-pressed="true" data-i18n="seg_frame">Mechanical design</button><button type="button" data-view="elec" aria-pressed="false" data-i18n="seg_elec">Electronics</button></div>
     <div class="stage">
       <div id="shwrap" role="img" aria-label="Interactive 3D scene">
         <canvas id="shcanvas" style="display:block;width:100%;height:100%"></canvas>
@@ -363,7 +367,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 <script>
 /* ---------- text, in two languages ---------- */
 var T = {
-  en:{tab_elec:"Glasses electronics",cap_elec:"A 3D model of my glasses electronics, laid out like my circuit diagram. Drag to look around; amber squares show power flowing from the battery to the ESP32-CAM.",l_bat:"LiPo battery 3.7V 500mAh",l_sw:"ON/OFF switch (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Button 1: obstacles",l_b2:"Button 2: read text",l_b3:"Button 3: banknotes and coins",l_res:"3 x 2.4kΩ resistors",l_ch:"CH340 programmer",l_pc:"PC / laptop (USB)",nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
+  en:{seg_frame:"Mechanical design",seg_elec:"Electronics",cap_elec:"A 3D model of my glasses electronics, laid out like my circuit diagram. Drag to look around; amber squares show power flowing from the battery to the ESP32-CAM.",l_bat:"LiPo battery 3.7V 500mAh",l_sw:"ON/OFF switch (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Button 1: obstacles",l_b2:"Button 2: read text",l_b3:"Button 3: banknotes and coins",l_res:"3 x 2.4kΩ resistors",l_ch:"CH340 programmer",l_pc:"PC / laptop (USB)",nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
     tab_glasses:"Smart glasses",tab_pipe:"IoT pipeline",tab_rag:"Nexus-Ops workflow",
     cap_glasses:"Wireframe of my smart glasses: frame, camera module and electronics housings on the temples.",
     cap_pipe:"How one reading travels through my IoT platform, from a sensor to the Grafana dashboard. Each square is a reading; its colour is the sensor type. Pick a step to see what happens.",
@@ -424,7 +428,7 @@ var T = {
     contact_h:"Contact",contact_p:"I am available for a 6-month end-of-studies internship from February 2027. The easiest way to reach me is LinkedIn.",
     foot:"Layla El Hajjaji, Mohammedia, Morocco",
     words:["data pipelines","microservices","AI agents","IoT systems"]},
-  fr:{tab_elec:"Électronique des lunettes",cap_elec:"Un modèle 3D de l'électronique de mes lunettes, disposé comme mon schéma électrique. Faites glisser pour tourner ; les carrés ambre montrent le courant de la batterie vers l'ESP32-CAM.",l_bat:"Batterie LiPo 3,7V 500mAh",l_sw:"Interrupteur ON/OFF (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Bouton 1 : obstacles",l_b2:"Bouton 2 : lecture de texte",l_b3:"Bouton 3 : billets et pièces",l_res:"3 résistances 2,4kΩ",l_ch:"Programmeur CH340",l_pc:"PC portable (USB)",nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
+  fr:{seg_frame:"Conception mécanique",seg_elec:"Électronique",cap_elec:"Un modèle 3D de l'électronique de mes lunettes, disposé comme mon schéma électrique. Faites glisser pour tourner ; les carrés ambre montrent le courant de la batterie vers l'ESP32-CAM.",l_bat:"Batterie LiPo 3,7V 500mAh",l_sw:"Interrupteur ON/OFF (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Bouton 1 : obstacles",l_b2:"Bouton 2 : lecture de texte",l_b3:"Bouton 3 : billets et pièces",l_res:"3 résistances 2,4kΩ",l_ch:"Programmeur CH340",l_pc:"PC portable (USB)",nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
     tab_glasses:"Lunettes intelligentes",tab_pipe:"Pipeline IoT",tab_rag:"Workflow Nexus-Ops",
     cap_glasses:"Fil de fer de mes lunettes : monture, module caméra et boîtiers électroniques sur les branches.",
     cap_pipe:"Le trajet d'une mesure dans ma plateforme IoT, du capteur au tableau de bord Grafana. Chaque carré est une mesure ; sa couleur indique le type de capteur. Choisissez une étape pour voir ce qui se passe.",
@@ -989,7 +993,8 @@ document.getElementById("theme").onclick = function(){
   function setScene(k){
     cur=k; sc=SC[k]; activeStep=0; yaw=sc.yaw!==undefined?sc.yaw:-.5; pitch=sc.pitch!==undefined?sc.pitch:.28; vy=0; lab.innerHTML=""; spans=sc.labels.map(function(l){ var s=document.createElement("span"); lab.appendChild(s); return s; });
     idea.style.display = sc.idea ? "block" : "none"; figs.style.display = sc.figs ? "" : "none";
-    document.querySelectorAll(".tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-tab")===k ? "true":"false"); });
+    var grp=(k==="elec")?"glasses":k; document.querySelectorAll(".tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-tab")===grp ? "true":"false"); });
+    var seg=document.getElementById("shseg"); seg.hidden=(grp!=="glasses"); seg.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-view")===k ? "true":"false"); });
     D=sc.D; wrap.style.height = sc.solid ? (window.innerWidth<640?"400px":"470px") : ""; resize(); text(); autoplay(); draw(0); if(!reduce) start();
   }
   var activeStep=0, apT=0;
@@ -1091,6 +1096,7 @@ document.getElementById("theme").onclick = function(){
   wrap.addEventListener("keydown",function(e){ if(e.key==="ArrowLeft"){yaw-=.15;draw(t0);} if(e.key==="ArrowRight"){yaw+=.15;draw(t0);} });
   wrap.tabIndex=0;
   document.querySelectorAll(".tabs button").forEach(function(b){ b.addEventListener("click",function(){ setScene(b.getAttribute("data-tab")); }); });
+  document.querySelectorAll("#shseg button").forEach(function(b){ b.addEventListener("click",function(){ setScene(b.getAttribute("data-view")); }); });
   window.addEventListener("resize",function(){ resize(); text(); draw(t0); });
   new IntersectionObserver(function(en){ vis=en[0].isIntersecting; vis?start():stop(); }).observe(wrap);
   document.addEventListener("visibilitychange",function(){ document.hidden?stop():start(); });
