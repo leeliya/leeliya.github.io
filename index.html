@@ -130,7 +130,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 .figs figure{margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
 .figs img{display:block;width:100%;height:auto}
 .figs figcaption{padding:8px 12px;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line)}
-@media (max-width:640px){#shlabels span{font-size:.64rem;padding:1px 5px}#shwrap{height:300px}.figs{grid-template-columns:1fr}}
+@media (max-width:640px){#shlabels span{font-size:.64rem;padding:1px 5px}#shwrap{height:340px}.figs{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -280,6 +280,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-tab="glasses" data-i18n="tab_glasses">Smart glasses</button>
       <button role="tab" aria-selected="false" data-tab="pipe" data-i18n="tab_pipe">IoT pipeline</button>
+      <button role="tab" aria-selected="false" data-tab="elec" data-i18n="tab_elec">Electronics</button>
       <button role="tab" aria-selected="false" data-tab="rag" data-i18n="tab_rag">RAG for CAD files</button>
     </div>
     <div class="stage">
@@ -293,7 +294,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
     </div>
     <div class="figs" id="shfigs">
       <figure><img src="img/glasses-catia.jpg" alt="CATIA V5 assembly of the smart glasses" loading="lazy"><figcaption data-i18n="fig1">The real CATIA V5 assembly of the glasses (from my project report).</figcaption></figure>
-      <figure><img src="img/glasses-blocks.png" alt="Block diagram of the glasses electronics" loading="lazy"><figcaption data-i18n="fig2">Block diagram of the electronics: power, ESP32-CAM, Wi-Fi link and three buttons.</figcaption></figure>
+      <figure><img src="img/glasses-circuit.jpg" alt="Circuit diagram of the glasses electronics: battery, charger, diode, step-up converter, switch, ESP32-CAM and three buttons" loading="lazy"><figcaption data-i18n="fig2">Block diagram of the electronics: power, ESP32-CAM, Wi-Fi link and three buttons.</figcaption></figure>
     </div>
   </section>
 
@@ -337,7 +338,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 <script>
 /* ---------- text, in two languages ---------- */
 var T = {
-  en:{nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
+  en:{tab_elec:"Glasses electronics",cap_elec:"The components inside my smart glasses, wired as in my circuit diagram. Amber dots show power flowing from the battery to the ESP32-CAM.",l_bat:"LiPo battery 3.7V 500mAh",l_sw:"ON/OFF switch (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Button 1: obstacles",l_b2:"Button 2: read text",l_b3:"Button 3: banknotes and coins",nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
     tab_glasses:"Smart glasses",tab_pipe:"IoT pipeline",tab_rag:"Nexus-Ops RAG",
     cap_glasses:"Wireframe of my smart glasses: frame, camera module and electronics housings on the temples.",
     cap_pipe:"Sensors to Kafka, Flink, ClickHouse and Grafana. Amber dots are anomalies.",
@@ -398,7 +399,7 @@ var T = {
     contact_h:"Contact",contact_p:"I am available for a 6-month end-of-studies internship in Morocco from February 2027. The easiest way to reach me is LinkedIn.",
     foot:"Layla El Hajjaji, Mohammedia, Morocco",
     words:["data pipelines","microservices","AI agents","IoT systems"]},
-  fr:{nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
+  fr:{tab_elec:"Électronique des lunettes",cap_elec:"Les composants de mes lunettes intelligentes, câblés comme dans mon schéma électrique. Les points ambre montrent le courant de la batterie vers l'ESP32-CAM.",l_bat:"Batterie LiPo 3,7V 500mAh",l_sw:"Interrupteur ON/OFF (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Bouton 1 : obstacles",l_b2:"Bouton 2 : lecture de texte",l_b3:"Bouton 3 : billets et pièces",nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
     tab_glasses:"Lunettes intelligentes",tab_pipe:"Pipeline IoT",tab_rag:"RAG Nexus-Ops",
     cap_glasses:"Fil de fer de mes lunettes : monture, module caméra et boîtiers électroniques sur les branches.",
     cap_pipe:"Des capteurs vers Kafka, Flink, ClickHouse et Grafana. Les points ambre sont des anomalies.",
@@ -807,6 +808,32 @@ document.getElementById("theme").onclick = function(){
     return {shapes:shapes,labels:L,particles:P,flow:function(p){ var x=-7.6+p.u*15.2; return [x,p.y*(p.u<.25?1:.25),p.z]; },
       anomaly:function(p){ return p.an && p.u>.5; },D:25,figs:false,idea:false};
   }
+  function cyl(r,h,n,cx,cy,cz,ax){ var a,b,v=[],e=[],i;
+    for(i=0;i<n;i++){ var t=i/n*Math.PI*2,c=Math.cos(t)*r,sn=Math.sin(t)*r;
+      if(ax==="x"){ v.push([cx-h/2,cy+c,cz+sn]); v.push([cx+h/2,cy+c,cz+sn]); } else { v.push([cx+c,cy-h/2,cz+sn]); v.push([cx+c,cy+h/2,cz+sn]); }
+      e.push([2*i,2*((i+1)%n)]); e.push([2*i+1,2*((i+1)%n)+1]); if(i%3===0) e.push([2*i,2*i+1]); }
+    return {v:v,e:e}; }
+  function sceneElec(){
+    var shapes=[],L=[],y=.25,i;
+    shapes.push(sh(cyl(.9,3.4,18,-9,1.2,-1,"y"),"--accent",.95));                                  /* LiPo battery */
+    shapes.push(sh(box(2.3,.2,1.5,-5.6,0,-1),"--text",.9)); shapes.push(sh(box(.6,.3,.5,-5.6,.2,-1.9),"--muted",.9)); /* TP4056 + USB */
+    shapes.push(sh(cyl(.17,1,8,-2.9,.3,-1,"x"),"--text",.95));                                      /* diode 1N5819 */
+    shapes.push(sh(box(2.3,.2,1.5,-.2,0,-1),"--text",.9)); shapes.push(sh(cyl(.45,.5,10,-.2,.4,-1,"y"),"--muted",.9)); /* MT3608 + inductor */
+    shapes.push(sh(box(1,.8,1,3.2,.3,-1),"--text",.95)); shapes.push(sh(box(.35,.3,.7,3.2,.8,-1),"--warn",.95)); /* switch */
+    shapes.push(sh(box(2.4,.2,3.6,7,0,1),"--accent",.9)); shapes.push(sh(box(1,.5,1,7,.35,.1),"--text",.9)); shapes.push(sh(circle(.25,12,7,.62,.1,"y"),"--warn",1)); /* ESP32-CAM */
+    var bx=[1,3,5],bz=[.6,1.4,2.2];
+    for(i=0;i<3;i++){ shapes.push(sh(box(.9,.35,.9,bx[i],.1,3.6),"--text",.9)); shapes.push(sh(circle(.28,12,bx[i],.3,3.6,"y"),["--accent","--warn","--accent"][i],1));
+      shapes.push(sh({v:[[bx[i],y,3.1],[bx[i],y,bz[i]],[5.8,y,bz[i]]],e:[[0,1],[1,2]]},"--accent",.7)); }
+    var path=[[-9,y,-1],[-6.9,y,-1],[-4.4,y,-1],[-3.4,y,-1],[-2.4,y,-1],[-1.35,y,-1],[.95,y,-1],[2.7,y,-1],[3.7,y,-1],[7,y,-1],[7,y,-.7]];
+    shapes.push(sh({v:path,e:path.slice(1).map(function(_,k){return [k,k+1];})},"--muted",.8));
+    var len=[0],tot=0; for(i=1;i<path.length;i++){ tot+=Math.abs(path[i][0]-path[i-1][0])+Math.abs(path[i][2]-path[i-1][2]); len.push(tot); }
+    L=[{k:"l_bat",p:[-9,3.2,-1]},{k:null,t:"TP4056",p:[-5.6,1.4,-1]},{k:null,t:"1N5819",p:[-2.9,1.2,-1]},{k:null,t:"MT3608",p:[-.2,2,-1]},{k:"l_sw",p:[3.2,2.1,-1]},{k:"l_esp",p:[7.6,2.2,.8]},{k:"l_b1",p:[.4,1,3.6]},{k:"l_b2",p:[3,1.9,3.6]},{k:"l_b3",p:[5.6,1,3.6]}];
+    var P=[];for(i=0;i<34;i++) P.push({u:Math.random(),y:0,z:0,an:true,s:.03+Math.random()*.02});
+    shapes.forEach(function(q){ q.v.forEach(function(w){ w[2]=-w[2]; }); }); L.forEach(function(l){ l.p[2]=-l.p[2]; });
+    return {shapes:shapes,labels:L,particles:P,flow:function(p){ var d=p.u*tot,k=1; while(k<len.length-1&&len[k]<d) k++;
+        var f=(d-len[k-1])/Math.max(.001,len[k]-len[k-1]),a=path[k-1],b=path[k]; return [a[0]+(b[0]-a[0])*f,y+.05,a[2]+(b[2]-a[2])*f]; },
+      anomaly:function(){return true;},D:27,figs:true,idea:false,yaw:-.3,pitch:.72};
+  }
   function sceneRag(){
     var X=[-9,-5.4,-1.8,1.8,5.4,9],shapes=[],L=[],i;
     for(i=0;i<3;i++) shapes.push(sh(box(1.1,.32,1.4,X[0],-1+i*.7,0),"--text",.9));            /* documents */
@@ -823,10 +850,10 @@ document.getElementById("theme").onclick = function(){
     return {shapes:shapes,labels:L,particles:P,flow:function(p){ return [-8.2+p.u*16.4,p.y,p.z]; },
       anomaly:function(){return false;},vec:vec,D:27,figs:false,idea:false};
   }
-  var SC={glasses:sceneGlasses(),pipe:scenePipe(),rag:sceneRag()}, cur="glasses", sc=SC.glasses;
+  var SC={glasses:sceneGlasses(),pipe:scenePipe(),elec:sceneElec(),rag:sceneRag()}, cur="glasses", sc=SC.glasses;
   var spans=[];
   function setScene(k){
-    cur=k; sc=SC[k]; lab.innerHTML=""; spans=sc.labels.map(function(l){ var s=document.createElement("span"); lab.appendChild(s); return s; });
+    cur=k; sc=SC[k]; yaw=sc.yaw!==undefined?sc.yaw:-.5; pitch=sc.pitch!==undefined?sc.pitch:.28; vy=0; lab.innerHTML=""; spans=sc.labels.map(function(l){ var s=document.createElement("span"); lab.appendChild(s); return s; });
     idea.style.display = sc.idea ? "block" : "none"; figs.style.display = sc.figs ? "" : "none";
     document.querySelectorAll(".tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-tab")===k ? "true":"false"); });
     D=sc.D; resize(); text(); draw(0); if(!reduce) start();
@@ -838,7 +865,7 @@ document.getElementById("theme").onclick = function(){
   }
   function resize(){ var r=wrap.getBoundingClientRect(); dpr=Math.min(window.devicePixelRatio||1,2); W=r.width; H=r.height;
     canvas.width=W*dpr; canvas.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
-    F=Math.min(W*D/(cur==="rag"?24:17.5), H*D/9.2); if(cur==="glasses") F=Math.min(W*D/11.5,H*D/6.6); }
+    F=Math.min(W*D/(cur==="rag"?24:cur==="elec"?21:17.5), H*D/9.2); if(cur==="glasses") F=Math.min(W*D/11.5,H*D/6.6); }
   function proj(p){ var cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
     var x1=cy*p[0]+sy*p[2], z1=-sy*p[0]+cy*p[2], y2=cp*p[1]+sp*z1, z2=-sp*p[1]+cp*z1, zz=z2+D, k=F/zz;
     return {x:W/2+x1*k, y:H/2-y2*k, z:zz, k:k}; }
