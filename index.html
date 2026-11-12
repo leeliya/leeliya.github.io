@@ -124,6 +124,15 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 .stepcard p{margin:0;color:var(--muted)}
 .stepcard pre{margin:10px 0 0;padding:10px 12px;border-radius:8px;background:var(--accent-soft);color:var(--text);font-size:.8rem;overflow-x:auto;white-space:pre-wrap}
 #shlabels span.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.legend2{padding:12px 16px;border-top:1px solid var(--line);display:grid;gap:8px;font-size:.8rem;color:var(--muted)}
+.legend2 .row{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.legend2 .lead{font-weight:600;color:var(--text);margin-right:2px}
+.legend2 .it{display:inline-flex;align-items:center;gap:6px}
+.legend2 .lead{font-size:.82rem}.sw{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid rgba(0,0,0,.35)}
+.sw.ring{box-shadow:0 0 0 2px #f59e0b;margin:0 2px}
+.sw.line{width:20px;height:4px;border-radius:2px;border:0}
+.sw.blk{width:14px;height:14px;border-radius:4px}
 /* ---------- 3D showcase ---------- */
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .tabs button{font:inherit;font-size:.88rem;border:1px solid var(--line);background:var(--surface);color:var(--muted);
@@ -304,6 +313,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
         <span class="hint" data-i18n="hint">Drag to rotate</span>
       </div>
       <div class="stage-cap"><span id="shcap"></span></div>
+      <div class="legend2" id="shlegend"></div>
     </div>
     <div class="steps" id="shsteps"><div class="chips" id="shchips"></div><div class="stepcard" id="shcard"></div></div>
     <div class="figs" id="shfigs">
@@ -355,8 +365,8 @@ var T = {
   en:{tab_elec:"Glasses electronics",cap_elec:"A 3D model of my glasses electronics, laid out like my circuit diagram. Drag to look around; amber dots show power flowing from the battery to the ESP32-CAM.",l_bat:"LiPo battery 3.7V 500mAh",l_sw:"ON/OFF switch (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Button 1: obstacles",l_b2:"Button 2: read text",l_b3:"Button 3: banknotes and coins",l_res:"3 x 2.4kΩ resistors",l_ch:"CH340 programmer",l_pc:"PC / laptop (USB)",nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
     tab_glasses:"Smart glasses",tab_pipe:"IoT pipeline",tab_rag:"Nexus-Ops workflow",
     cap_glasses:"Wireframe of my smart glasses: frame, camera module and electronics housings on the temples.",
-    cap_pipe:"How one reading travels through my IoT platform, from a sensor to the Grafana dashboard. Pick a step to see what happens.",
-    cap_rag:"How Nexus-Ops works: CI on a self-hosted runner, the churn model with MLflow, and the RAG assistant, all in one Kind Kubernetes cluster. Teal dots are the churn-model lane, violet dots the RAG lane.",
+    cap_pipe:"How one reading travels through my IoT platform, from a sensor to the Grafana dashboard. Each square is a reading; its colour is the sensor type. Pick a step to see what happens.",
+    cap_rag:"How Nexus-Ops works: CI on a self-hosted runner, the churn model with MLflow, and the RAG assistant, all in one Kind Kubernetes cluster. Teal squares are the churn-model lane, violet squares the RAG lane.",
     idea:"An idea I want to build, not a finished project",hint:"Drag to rotate",
     fig1:"The real CATIA V5 assembly of the glasses (from my project report).",
     fig2:"Block diagram of the electronics: power, ESP32-CAM, Wi-Fi link and three buttons.",
@@ -416,8 +426,8 @@ var T = {
   fr:{tab_elec:"Électronique des lunettes",cap_elec:"Un modèle 3D de l'électronique de mes lunettes, disposé comme mon schéma électrique. Faites glisser pour tourner ; les points ambre montrent le courant de la batterie vers l'ESP32-CAM.",l_bat:"Batterie LiPo 3,7V 500mAh",l_sw:"Interrupteur ON/OFF (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Bouton 1 : obstacles",l_b2:"Bouton 2 : lecture de texte",l_b3:"Bouton 3 : billets et pièces",l_res:"3 résistances 2,4kΩ",l_ch:"Programmeur CH340",l_pc:"PC portable (USB)",nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
     tab_glasses:"Lunettes intelligentes",tab_pipe:"Pipeline IoT",tab_rag:"Workflow Nexus-Ops",
     cap_glasses:"Fil de fer de mes lunettes : monture, module caméra et boîtiers électroniques sur les branches.",
-    cap_pipe:"Le trajet d'une mesure dans ma plateforme IoT, du capteur au tableau de bord Grafana. Choisissez une étape pour voir ce qui se passe.",
-    cap_rag:"Comment fonctionne Nexus-Ops : CI sur un runner auto-hébergé, le modèle de churn avec MLflow et l'assistant RAG, le tout dans un cluster Kubernetes Kind. Les points turquoise sont la voie du modèle de churn, les violets la voie RAG.",
+    cap_pipe:"Le trajet d'une mesure dans ma plateforme IoT, du capteur au tableau de bord Grafana. Chaque carré est une mesure ; sa couleur indique le type de capteur. Choisissez une étape pour voir ce qui se passe.",
+    cap_rag:"Comment fonctionne Nexus-Ops : CI sur un runner auto-hébergé, le modèle de churn avec MLflow et l'assistant RAG, le tout dans un cluster Kubernetes Kind. Les carrés turquoise sont la voie du modèle de churn, les violets la voie RAG.",
     idea:"Une idée que je veux réaliser, pas un projet terminé",hint:"Faites glisser pour tourner",
     fig1:"L'assemblage CATIA V5 réel des lunettes (extrait de mon rapport de projet).",
     fig2:"Schéma bloc de l'électronique : alimentation, ESP32-CAM, liaison Wi-Fi et trois boutons.",
@@ -885,60 +895,89 @@ document.getElementById("theme").onclick = function(){
     return {solid:true,solids:S,wires:W_,labels:L,particles:P,paths:[{pts:path,len:len,tot:tot,c:"#fbbf24"}],slab:[[-10.2+SHX,-.02,-6],[8.9+SHX,-.02,-6],[8.9+SHX,-.02,5.9],[-10.2+SHX,-.02,5.9]],
       D:30,figs:true,idea:false,yaw:-.28,pitch:.75};
   }
-  var STEPS={"pipe": [{"s": {"en": "Sensors", "fr": "Capteurs"}, "t": {"en": "1. Sensor simulators", "fr": "1. Simulateurs de capteurs"}, "d": {"en": "Python scripts simulate four sensor types: temperature, vibration, humidity and power. Each sensor sends a JSON reading every 2 seconds, and about 12% of the values are injected anomalies, shown here as amber dots.", "fr": "Des scripts Python simulent quatre types de capteurs : température, vibration, humidité et consommation. Chaque capteur envoie une mesure JSON toutes les 2 secondes, et environ 12 % des valeurs sont des anomalies injectées, ici les points ambre."}, "x": "{\"sensor_id\":\"temp_001\",\"location\":\"zone_A\",\"value\":87.4,\"unit\":\"celsius\",\"is_anomaly\":false}"}, {"s": {"en": "Kafka", "fr": "Kafka"}, "t": {"en": "2. Kafka topics", "fr": "2. Topics Kafka"}, "d": {"en": "Readings are published to one Kafka topic per sensor type: temperature-events, vibration-events, humidity-events and power-events. Kafka sits between the simulators and the processing, so neither side has to wait for the other.", "fr": "Les mesures sont publiées dans un topic Kafka par type de capteur : temperature-events, vibration-events, humidity-events et power-events. Kafka s'intercale entre les simulateurs et le traitement, sans que l'un attende l'autre."}}, {"s": {"en": "anomaly_job", "fr": "anomaly_job"}, "t": {"en": "3. Flink anomaly_job", "fr": "3. Job Flink anomaly_job"}, "d": {"en": "This Flink job reads the topics and compares every value with its sensor's thresholds. Above the normal maximum is HIGH, above the critical threshold is CRITICAL (for temperature, 85 and 100 °C). Every reading is stored in raw_readings, and each anomaly is also written to alerts.", "fr": "Ce job Flink lit les topics et compare chaque valeur aux seuils de son capteur. Au-dessus du maximum normal, l'alerte est HIGH ; au-dessus du seuil critique, elle est CRITICAL (pour la température, 85 et 100 °C). Toutes les mesures vont dans raw_readings, et chaque anomalie est aussi écrite dans alerts."}, "x": "value >= critical     -> CRITICAL\nvalue >= normal_max  -> HIGH"}, {"s": {"en": "aggregation_job", "fr": "aggregation_job"}, "t": {"en": "4. Flink aggregation_job", "fr": "4. Job Flink aggregation_job"}, "d": {"en": "A second Flink job groups the readings into 30-second windows and computes the average, minimum, maximum and standard deviation for each sensor. The results go to the aggregations table.", "fr": "Un second job Flink regroupe les mesures par fenêtres de 30 secondes et calcule la moyenne, le minimum, le maximum et l'écart-type de chaque capteur. Les résultats vont dans la table aggregations."}}, {"s": {"en": "ClickHouse", "fr": "ClickHouse"}, "t": {"en": "5. ClickHouse storage", "fr": "5. Stockage ClickHouse"}, "d": {"en": "Three MergeTree tables hold the data: raw_readings keeps the full history, aggregations keeps the 30-second statistics and alerts keeps the HIGH and CRITICAL events. Pre-computing the aggregations keeps the dashboard queries fast. After several hours the platform held about 703,000 readings.", "fr": "Trois tables MergeTree contiennent les données : raw_readings garde tout l'historique, aggregations les statistiques par 30 secondes et alerts les événements HIGH et CRITICAL. Pré-calculer les agrégations garde les requêtes du tableau de bord rapides. Après plusieurs heures, la plateforme contenait environ 703 000 mesures."}}, {"s": {"en": "Grafana", "fr": "Grafana"}, "t": {"en": "6. Grafana dashboard", "fr": "6. Tableau de bord Grafana"}, "d": {"en": "The Supervision IoT dashboard has 9 panels and refreshes every 5 seconds. It queries ClickHouse through its plugin and shows the sensor curves, the latest alerts, anomalies by type and by zone, and sensor health.", "fr": "Le tableau de bord Supervision IoT compte 9 panels et se rafraîchit toutes les 5 secondes. Il interroge ClickHouse via son plugin et affiche les courbes des capteurs, les dernières alertes, les anomalies par type et par zone, et l'état des capteurs."}}], "rag": [{"s": {"en": "CI runner", "fr": "Runner CI"}, "t": {"en": "1. GitHub Actions runner", "fr": "1. Runner GitHub Actions"}, "d": {"en": "My code lives on GitHub, and a GitHub Actions workflow runs on a self-hosted runner. The services of the platform run in a Kind Kubernetes cluster.", "fr": "Mon code est sur GitHub, et un workflow GitHub Actions s'exécute sur un runner auto-hébergé. Les services de la plateforme tournent dans un cluster Kubernetes Kind."}}, {"s": {"en": "Training", "fr": "Entraînement"}, "t": {"en": "2. Churn model training", "fr": "2. Entraînement du modèle de churn"}, "d": {"en": "train_pipeline.py prepares the customer-churn data (19 features, 46 columns once encoded), trains the model and logs the run.", "fr": "train_pipeline.py prépare les données de churn clients (19 variables, 46 colonnes après encodage), entraîne le modèle et enregistre le run."}}, {"s": {"en": "MLflow", "fr": "MLflow"}, "t": {"en": "3. MLflow tracking and registry", "fr": "3. Suivi et registre MLflow"}, "d": {"en": "MLflow records the parameters and metrics of every run. The best model, a logistic regression, is the champion and is registered as version 1 in the model registry.", "fr": "MLflow enregistre les paramètres et les métriques de chaque run. Le meilleur modèle, une régression logistique, est le champion et est enregistré en version 1 dans le registre de modèles."}, "x": "accuracy 0.802  |  weighted F1 0.798  |  ROC-AUC 0.849"}, {"s": {"en": "FAISS", "fr": "FAISS"}, "t": {"en": "4. Documents and FAISS index", "fr": "4. Documents et index FAISS"}, "d": {"en": "For the RAG assistant, documents are turned into vectors and stored in a FAISS index. When a question arrives, the closest passages are retrieved from that index.", "fr": "Pour l'assistant RAG, les documents sont transformés en vecteurs et stockés dans un index FAISS. Quand une question arrive, les passages les plus proches sont récupérés dans cet index."}}, {"s": {"en": "phi3:mini", "fr": "phi3:mini"}, "t": {"en": "5. phi3:mini on Ollama", "fr": "5. phi3:mini sur Ollama"}, "d": {"en": "The retrieved passages and the question are sent to phi3:mini, a small language model that runs locally with Ollama, and it writes the answer.", "fr": "Les passages récupérés et la question sont envoyés à phi3:mini, un petit modèle de langage exécuté localement avec Ollama, qui rédige la réponse."}}, {"s": {"en": "FastAPI", "fr": "FastAPI"}, "t": {"en": "6. FastAPI", "fr": "6. FastAPI"}, "d": {"en": "FastAPI is the API layer of the platform, between the models and the Streamlit interface.", "fr": "FastAPI est la couche API de la plateforme, entre les modèles et l'interface Streamlit."}}, {"s": {"en": "Streamlit", "fr": "Streamlit"}, "t": {"en": "7. Streamlit interface", "fr": "7. Interface Streamlit"}, "d": {"en": "Streamlit is the web interface where a user asks questions to the assistant and sees the predictions and answers.", "fr": "Streamlit est l'interface web où l'utilisateur pose ses questions à l'assistant et voit les prédictions et les réponses."}}]};
+  var LEG={"pipe": [{"lead": {"en": "Moving squares are readings:", "fr": "Les carrés mobiles sont des mesures :"}, "items": [{"c": "#ef4444", "k": "sq", "t": {"en": "Temperature", "fr": "Température"}}, {"c": "#8b5cf6", "k": "sq", "t": {"en": "Vibration", "fr": "Vibration"}}, {"c": "#3b82f6", "k": "sq", "t": {"en": "Humidity", "fr": "Humidité"}}, {"c": "#eab308", "k": "sq", "t": {"en": "Power", "fr": "Consommation"}}, {"c": "#475569", "k": "sq", "t": {"en": "30-second aggregate", "fr": "Agrégat de 30 s"}}, {"c": "#ffffff", "k": "ring", "t": {"en": "Amber ring = anomaly", "fr": "Anneau ambre = anomalie"}}]}, {"lead": {"en": "Blocks and lines:", "fr": "Blocs et lignes :"}, "items": [{"c": "#d6336c", "k": "blk", "t": {"en": "Flink job", "fr": "Job Flink"}}, {"c": "#f5c400", "k": "blk", "t": {"en": "ClickHouse table (red bars = alerts)", "fr": "Table ClickHouse (barres rouges = alertes)"}}, {"c": "#f46800", "k": "blk", "t": {"en": "Grafana dashboard", "fr": "Tableau Grafana"}}, {"c": "#9ca3af", "k": "line", "t": {"en": "Data flow", "fr": "Flux de données"}}, {"c": "#f59e0b", "k": "line", "t": {"en": "Alert path", "fr": "Chemin des alertes"}}]}], "rag": [{"lead": {"en": "Moving squares are data:", "fr": "Les carrés mobiles sont des données :"}, "items": [{"c": "#0d9488", "k": "sq", "t": {"en": "Churn data and model (MLOps lane)", "fr": "Données et modèle de churn (voie MLOps)"}}, {"c": "#7c3aed", "k": "sq", "t": {"en": "Documents and questions (RAG lane)", "fr": "Documents et questions (voie RAG)"}}, {"c": "#f97316", "k": "sq", "t": {"en": "Prediction or answer for the user", "fr": "Prédiction ou réponse pour l'utilisateur"}}]}, {"lead": {"en": "Blocks and lines:", "fr": "Blocs et lignes :"}, "items": [{"c": "#6366f1", "k": "blk", "t": {"en": "Training", "fr": "Entraînement"}}, {"c": "#0194e2", "k": "blk", "t": {"en": "MLflow registry", "fr": "Registre MLflow"}}, {"c": "#a78bfa", "k": "blk", "t": {"en": "FAISS vector space", "fr": "Espace vectoriel FAISS"}}, {"c": "#059669", "k": "blk", "t": {"en": "FastAPI", "fr": "FastAPI"}}, {"c": "#16a34a", "k": "line", "t": {"en": "CI runner link", "fr": "Lien du runner CI"}}, {"c": "#9ca3af", "k": "line", "t": {"en": "Data flow", "fr": "Flux de données"}}, {"c": "#dbe9fb", "k": "blk", "t": {"en": "Kind Kubernetes cluster", "fr": "Cluster Kubernetes Kind"}}]}], "elec": [{"lead": {"en": "Moving dots:", "fr": "Points mobiles :"}, "items": [{"c": "#fbbf24", "k": "sq", "t": {"en": "Electric current from the battery to the ESP32-CAM", "fr": "Courant de la batterie vers l'ESP32-CAM"}}]}, {"lead": {"en": "Wires:", "fr": "Fils :"}, "items": [{"c": "#d62828", "k": "line", "t": {"en": "Power (+)", "fr": "Alimentation (+)"}}, {"c": "#1b1b1b", "k": "line", "t": {"en": "Ground", "fr": "Masse"}}, {"c": "#2563eb", "k": "line", "t": {"en": "Button 1 signal (GPIO14)", "fr": "Signal bouton 1 (GPIO14)"}}, {"c": "#7c3aed", "k": "line", "t": {"en": "Button 2 (GPIO15) and programming cable", "fr": "Bouton 2 (GPIO15) et câble de programmation"}}, {"c": "#f97316", "k": "line", "t": {"en": "Button 3 signal (GPIO13)", "fr": "Signal bouton 3 (GPIO13)"}}]}]};
+  var STEPS={"pipe": [{"s": {"en": "Sensors", "fr": "Capteurs"}, "t": {"en": "1. Sensor simulators", "fr": "1. Simulateurs de capteurs"}, "d": {"en": "Python scripts simulate four sensor types: temperature, vibration, humidity and power. Each sensor sends a JSON reading every 2 seconds, and about 12% of the values are injected anomalies, shown here with an amber ring.", "fr": "Des scripts Python simulent quatre types de capteurs : température, vibration, humidité et consommation. Chaque capteur envoie une mesure JSON toutes les 2 secondes, et environ 12 % des valeurs sont des anomalies injectées, ici entourées d'un anneau ambre."}, "x": "{\"sensor_id\":\"temp_001\",\"location\":\"zone_A\",\"value\":87.4,\"unit\":\"celsius\",\"is_anomaly\":false}"}, {"s": {"en": "Kafka", "fr": "Kafka"}, "t": {"en": "2. Kafka topics", "fr": "2. Topics Kafka"}, "d": {"en": "Readings are published to one Kafka topic per sensor type: temperature-events, vibration-events, humidity-events and power-events. Kafka sits between the simulators and the processing, so neither side has to wait for the other.", "fr": "Les mesures sont publiées dans un topic Kafka par type de capteur : temperature-events, vibration-events, humidity-events et power-events. Kafka s'intercale entre les simulateurs et le traitement, sans que l'un attende l'autre."}}, {"s": {"en": "anomaly_job", "fr": "anomaly_job"}, "t": {"en": "3. Flink anomaly_job", "fr": "3. Job Flink anomaly_job"}, "d": {"en": "This Flink job reads the topics and compares every value with its sensor's thresholds. Above the normal maximum is HIGH, above the critical threshold is CRITICAL (for temperature, 85 and 100 °C). Every reading is stored in raw_readings, and each anomaly is also written to alerts.", "fr": "Ce job Flink lit les topics et compare chaque valeur aux seuils de son capteur. Au-dessus du maximum normal, l'alerte est HIGH ; au-dessus du seuil critique, elle est CRITICAL (pour la température, 85 et 100 °C). Toutes les mesures vont dans raw_readings, et chaque anomalie est aussi écrite dans alerts."}, "x": "value >= critical     -> CRITICAL\nvalue >= normal_max  -> HIGH"}, {"s": {"en": "aggregation_job", "fr": "aggregation_job"}, "t": {"en": "4. Flink aggregation_job", "fr": "4. Job Flink aggregation_job"}, "d": {"en": "A second Flink job groups the readings into 30-second windows and computes the average, minimum, maximum and standard deviation for each sensor. The results go to the aggregations table.", "fr": "Un second job Flink regroupe les mesures par fenêtres de 30 secondes et calcule la moyenne, le minimum, le maximum et l'écart-type de chaque capteur. Les résultats vont dans la table aggregations."}}, {"s": {"en": "ClickHouse", "fr": "ClickHouse"}, "t": {"en": "5. ClickHouse storage", "fr": "5. Stockage ClickHouse"}, "d": {"en": "Three MergeTree tables hold the data: raw_readings keeps the full history, aggregations keeps the 30-second statistics and alerts keeps the HIGH and CRITICAL events. Pre-computing the aggregations keeps the dashboard queries fast. After several hours the platform held about 703,000 readings.", "fr": "Trois tables MergeTree contiennent les données : raw_readings garde tout l'historique, aggregations les statistiques par 30 secondes et alerts les événements HIGH et CRITICAL. Pré-calculer les agrégations garde les requêtes du tableau de bord rapides. Après plusieurs heures, la plateforme contenait environ 703 000 mesures."}}, {"s": {"en": "Grafana", "fr": "Grafana"}, "t": {"en": "6. Grafana dashboard", "fr": "6. Tableau de bord Grafana"}, "d": {"en": "The Supervision IoT dashboard has 9 panels and refreshes every 5 seconds. It queries ClickHouse through its plugin and shows the sensor curves, the latest alerts, anomalies by type and by zone, and sensor health.", "fr": "Le tableau de bord Supervision IoT compte 9 panels et se rafraîchit toutes les 5 secondes. Il interroge ClickHouse via son plugin et affiche les courbes des capteurs, les dernières alertes, les anomalies par type et par zone, et l'état des capteurs."}}], "rag": [{"s": {"en": "CI runner", "fr": "Runner CI"}, "t": {"en": "1. GitHub Actions runner", "fr": "1. Runner GitHub Actions"}, "d": {"en": "My code lives on GitHub, and a GitHub Actions workflow runs on a self-hosted runner. The services of the platform run in a Kind Kubernetes cluster.", "fr": "Mon code est sur GitHub, et un workflow GitHub Actions s'exécute sur un runner auto-hébergé. Les services de la plateforme tournent dans un cluster Kubernetes Kind."}}, {"s": {"en": "Training", "fr": "Entraînement"}, "t": {"en": "2. Churn model training", "fr": "2. Entraînement du modèle de churn"}, "d": {"en": "train_pipeline.py prepares the customer-churn data (19 features, 46 columns once encoded), trains the model and logs the run.", "fr": "train_pipeline.py prépare les données de churn clients (19 variables, 46 colonnes après encodage), entraîne le modèle et enregistre le run."}}, {"s": {"en": "MLflow", "fr": "MLflow"}, "t": {"en": "3. MLflow tracking and registry", "fr": "3. Suivi et registre MLflow"}, "d": {"en": "MLflow records the parameters and metrics of every run. The best model, a logistic regression, is the champion and is registered as version 1 in the model registry.", "fr": "MLflow enregistre les paramètres et les métriques de chaque run. Le meilleur modèle, une régression logistique, est le champion et est enregistré en version 1 dans le registre de modèles."}, "x": "accuracy 0.802  |  weighted F1 0.798  |  ROC-AUC 0.849"}, {"s": {"en": "FAISS", "fr": "FAISS"}, "t": {"en": "4. Documents and FAISS index", "fr": "4. Documents et index FAISS"}, "d": {"en": "For the RAG assistant, documents are turned into vectors and stored in a FAISS index. When a question arrives, the closest passages are retrieved from that index.", "fr": "Pour l'assistant RAG, les documents sont transformés en vecteurs et stockés dans un index FAISS. Quand une question arrive, les passages les plus proches sont récupérés dans cet index."}}, {"s": {"en": "phi3:mini", "fr": "phi3:mini"}, "t": {"en": "5. phi3:mini on Ollama", "fr": "5. phi3:mini sur Ollama"}, "d": {"en": "The retrieved passages and the question are sent to phi3:mini, a small language model that runs locally with Ollama, and it writes the answer.", "fr": "Les passages récupérés et la question sont envoyés à phi3:mini, un petit modèle de langage exécuté localement avec Ollama, qui rédige la réponse."}}, {"s": {"en": "FastAPI", "fr": "FastAPI"}, "t": {"en": "6. FastAPI", "fr": "6. FastAPI"}, "d": {"en": "FastAPI is the API layer of the platform, between the models and the Streamlit interface.", "fr": "FastAPI est la couche API de la plateforme, entre les modèles et l'interface Streamlit."}}, {"s": {"en": "Streamlit", "fr": "Streamlit"}, "t": {"en": "7. Streamlit interface", "fr": "7. Interface Streamlit"}, "d": {"en": "Streamlit is the web interface where a user asks questions to the assistant and sees the predictions and answers.", "fr": "Streamlit est l'interface web où l'utilisateur pose ses questions à l'assistant et voit les prédictions et les réponses."}}]};
 
-  function mkpath(pts,c){ var len=[0],tot=0,i; for(i=1;i<pts.length;i++){ var a=pts[i-1],b=pts[i]; tot+=Math.sqrt(Math.pow(b[0]-a[0],2)+Math.pow(b[1]-a[1],2)+Math.pow(b[2]-a[2],2)); len.push(tot); } return {pts:pts,len:len,tot:tot,c:c}; }
+
+  function frameS(cx,cy,cz,w,h,d,t,c){ var o=[],x=w/2,y=h/2,z=d/2,a,b;
+    [-1,1].forEach(function(sy){ [-1,1].forEach(function(sz){ o.push(boxS(cx,cy+sy*y,cz+sz*z,w,t,t,c)); }); });
+    [-1,1].forEach(function(sx){ [-1,1].forEach(function(sz){ o.push(boxS(cx+sx*x,cy,cz+sz*z,t,h,t,c)); }); });
+    [-1,1].forEach(function(sx){ [-1,1].forEach(function(sy){ o.push(boxS(cx+sx*x,cy+sy*y,cz,t,t,d,c)); }); }); return o; }
+  function mkpath(pts,c,o){ var len=[0],tot=0,i; for(i=1;i<pts.length;i++){ var a=pts[i-1],b=pts[i]; tot+=Math.sqrt(Math.pow(b[0]-a[0],2)+Math.pow(b[1]-a[1],2)+Math.pow(b[2]-a[2],2)); len.push(tot); }
+    var r={pts:pts,len:len,tot:tot,c:c}; if(o){ for(var k in o) r[k]=o[k]; } return r; }
   function scenePipe(){
-    var S=[],Wr=[],i,Gy="#9ca3af",TEAL="#0d9488",AMB="#f59e0b";
-    function A(o,st){ o.st=st; S.push(o); }
+    var S=[],Wr=[],i,Gy="#9ca3af",AMB="#f59e0b",SL="#475569";
+    function A(o,st){ if(o.f){ o.st=st; S.push(o); } else o.forEach(function(q){ q.st=st; S.push(q); }); }
     function wr(pts,c,r){ Wr.push({pts:pts,c:c||Gy,r:r||.05}); }
     var lane=[{z:3,c:"#ef4444"},{z:1,c:"#8b5cf6"},{z:-1,c:"#3b82f6"},{z:-3,c:"#eab308"}];
     A(boxS(-6,.05,0,3.8,.1,8.6,"#374151",{nx:2,nz:9}),1);
-    lane.forEach(function(l){ A(boxS(-10.5,.4,l.z,.9,.8,.9,l.c),0); A(cylS(-10.5,.95,l.z,.26,.3,12,"#f3f4f6","y"),0);
-      A(cylS(-6,.55,l.z,.38,3.2,16,l.c,"x","#1f2937"),1); });
-    A(boxS(-.8,.5,2.4,2.4,1,2,"#d6336c",{top:"#e8588a"}),2); A(cylS(-.8,1.3,2.4,.55,.6,3,AMB,"y"),2);
-    A(boxS(-.8,.5,-2.4,2.4,1,2,"#d6336c",{top:"#e8588a"}),3); [1.1,1.3,1.5].forEach(function(y,k){ A(boxS(-.8,y,-2.4,1.6-k*.2,.12,1.2,"#fde68a"),3); });
-    [[3.8,0],[1.4,1],[-2.4,0]].forEach(function(t){ A(cylS(4.4,.7,t[0],.9,1.4,22,"#f5c400","y",t[1]?"#ef4444":"#fde047"),4); A(cylS(4.4,.4,t[0],.93,.08,22,"#b8860b","y"),4); A(cylS(4.4,.95,t[0],.93,.08,22,"#b8860b","y"),4); });
+    lane.forEach(function(l,k){ var z=l.z,x=-10.5;
+      A(boxS(x,.2,z,1.1,.4,1.1,l.c),0);
+      if(k===0){ A(cylS(x,.85,z,.1,.9,10,"#ffffff","y"),0); A(cylS(x,.4,z,.25,.2,12,"#ffffff","y"),0); }
+      if(k===1){ [[-.3,.5],[0,.9],[.3,.6]].forEach(function(b){ A(boxS(x+b[0],.4+b[1]/2,z,.18,b[1],.18,"#ffffff"),0); }); }
+      if(k===2){ A(cylS(x,.55,z,.28,.3,12,"#ffffff","y"),0); A(cylS(x,.85,z,.15,.3,10,"#ffffff","y"),0); }
+      if(k===3){ A(boxS(x,.65,z,.5,.5,.3,"#ffffff"),0); A(boxS(x-.12,.99,z,.08,.2,.08,"#ffffff"),0); A(boxS(x+.12,.99,z,.08,.2,.08,"#ffffff"),0); }
+      A(cylS(-6,.55,z,.38,3.2,16,l.c,"x","#1f2937"),1); [-7,-6,-5].forEach(function(rx){ A(cylS(rx,.55,z,.46,.12,16,"#111827","x"),1); }); });
+    /* Flink jobs: hexagonal platforms with a threshold gate (anomaly) and a time window (aggregation) */
+    A(cylS(-.8,.3,2.4,1.5,.6,6,"#d6336c","y","#e8588a"),2);
+    A(boxS(-.8,1.1,3.3,.25,1.6,.25,AMB),2); A(boxS(-.8,1.1,1.5,.25,1.6,.25,AMB),2); A(boxS(-.8,1.95,2.4,.25,.25,2.05,AMB),2);
+    A(cylS(-.8,.3,-2.4,1.5,.6,6,"#d6336c","y","#e8588a"),3); A(frameS(-.8,1.15,-2.4,.5,1.5,2.2,.12,"#fde68a"),3);
+    /* ClickHouse: columnar storage, one group of bars per table */
+    var tb=[{z:3.8,c:"#f5c400",h:[1.2,.8,1.6,1.0,1.4]},{z:1.4,c:"#ef4444",h:[.5,.9,.4,.7,.3]},{z:-2.4,c:"#f5c400",h:[.8,1,.9,1.1,1]}];
+    tb.forEach(function(t){ A(boxS(4.4,.05,t.z,2.4,.1,1.6,t.c==="#ef4444"?"#fecaca":"#fff3b0",{nx:3}),4); t.h.forEach(function(h,k){ A(boxS(3.6+k*.4,.1+h/2,t.z,.28,h,.9,t.c),4); }); });
+    /* Grafana dashboard: nine panels with small charts */
     A(boxS(9.4,.2,0,1.8,.3,.9,"#374151"),5); A(boxS(9.4,1.9,0,5,3.2,.3,"#f46800"),5); A(boxS(9.4,1.9,-.18,4.7,2.9,.05,"#111827"),5);
-    var pc=["#22c55e","#3b82f6","#f59e0b","#ef4444","#8b5cf6","#14b8a6","#f97316","#06b6d4","#eab308"];
-    for(i=0;i<9;i++) A(boxS(9.4+((i%3)-1)*1.5,1.9+(1-Math.floor(i/3))*.95,-.22,1.3,.8,.04,pc[i]),5);
+    var pc=["#22c55e","#3b82f6","#f59e0b","#ef4444","#8b5cf6","#14b8a6","#f97316","#06b6d4","#eab308"],hs=[.2,.5,.35,.6,.3];
+    for(i=0;i<9;i++){ var px=9.4+((i%3)-1)*1.5,py=1.9+(1-Math.floor(i/3))*.95; A(boxS(px,py,-.21,1.3,.8,.03,"#1f2937"),5);
+      hs.forEach(function(h,k){ A(boxS(px-.45+k*.22,py-.35+h*(.6+(i%3)*.15)/2,-.25,.12,h*(.6+(i%3)*.15),.03,pc[i]),5); }); }
     lane.forEach(function(l){ wr([[-10,.15,l.z],[-7.7,.15,l.z]]); wr([[-4.4,.15,l.z],[-2.6,.15,l.z],[-2.6,.15,2.4],[-2,.15,2.4]]); wr([[-2.6,.15,l.z],[-2.6,.15,-2.4],[-2,.15,-2.4]]); });
     wr([[.4,.15,2.4],[2,.15,2.4],[2,.15,3.8],[3.5,.15,3.8]]); wr([[2,.15,2.4],[2,.15,1.4],[3.5,.15,1.4]],AMB,.06); wr([[.4,.15,-2.4],[3.5,.15,-2.4]]);
-    [3.8,1.4,-2.4].forEach(function(z){ wr([[5.3,.15,z],[6.2,.15,z],[6.2,.15,0],[6.8,.15,0]]); });
+    [3.8,1.4,-2.4].forEach(function(z){ wr([[5.7,.15,z],[6.2,.15,z],[6.2,.15,0],[6.8,.15,0]]); });
     var paths=[],P=[];
     lane.forEach(function(l){ var st=[[-10,.5,l.z],[-7.7,.5,l.z],[-4.4,.5,l.z],[-2.6,.5,l.z]], gr=function(z){ return [[6.2,.5,z],[6.2,.5,0],[7.2,.5,0]]; };
       var kinds=[ [[-2.6,.5,2.4],[-.8,.5,2.4],[2,.5,2.4],[2,.5,3.8],[4.4,.5,3.8]].concat(gr(3.8)), [[-2.6,.5,2.4],[-.8,.5,2.4],[2,.5,2.4],[2,.5,1.4],[4.4,.5,1.4]].concat(gr(1.4)), [[-2.6,.5,-2.4],[-.8,.5,-2.4],[4.4,.5,-2.4]].concat(gr(-2.4)) ];
-      kinds.forEach(function(k,ki){ var idx=paths.length; paths.push(mkpath(st.concat(k),ki===1?AMB:TEAL)); var n=ki===1?1:(ki===0?3:2); for(var j=0;j<n;j++) P.push({u:Math.random(),s:.028+Math.random()*.012,pi:idx}); }); });
+      kinds.forEach(function(k,ki){ var idx=paths.length; paths.push(mkpath(st.concat(k),l.c,ki===2?{sw:5,c1:SL}:(ki===1?{ring:true}:{}))); var n=ki===1?1:(ki===0?3:2); for(var j=0;j<n;j++) P.push({u:Math.random(),s:.028+Math.random()*.012,pi:idx}); }); });
     var steps=[{rect:[-11.6,-4.3,-9.4,4.3]},{rect:[-8,-4.6,-4,4.6]},{rect:[-2.3,1.2,.7,3.6]},{rect:[-2.3,-3.6,.7,-1.2]},{rect:[3.2,-3.6,5.6,5]},{rect:[6.8,-1.4,12,1.4]}];
-    var L=[{n:1,p:[-10.5,1.7,3]},{n:2,p:[-6,1.4,4.4]},{n:3,p:[-.8,2.2,2.4]},{n:4,p:[-.8,2.2,-2.4]},{n:5,p:[4.4,2.2,-2.4]},{n:6,p:[9.4,4,0]},
-      {k:null,t:"raw_readings",p:[4.4,1.9,3.8]},{k:null,t:"alerts",p:[4.4,1.9,1.4]},{k:null,t:"aggregations",p:[4.4,1.9,-4]}];
+    var L=[{n:1,p:[-10.5,1.8,3]},{n:2,p:[-6,1.4,4.4]},{n:3,p:[-.8,2.5,2.4]},{n:4,p:[-.8,2.5,-2.4]},{n:5,p:[4.4,2.3,-2.4]},{n:6,p:[9.4,4,0]},
+      {k:null,t:"raw_readings",p:[4.4,1.9,3.8]},{k:null,t:"alerts",p:[4.4,1.4,1.4]},{k:null,t:"aggregations",p:[4.4,1.6,-4]}];
     return {solid:true,solids:S,wires:Wr,labels:L,particles:P,paths:paths,steps:steps,slab:[[-12.4,-.02,-5.6],[12.8,-.02,-5.6],[12.8,-.02,6],[-12.4,-.02,6]],D:32,fw:27,fh:13,figs:false,idea:false,yaw:-.32,pitch:.72};
   }
 
   function sceneRag(){
-    var S=[],Wr=[],i,Gy="#9ca3af",TEAL="#0d9488",VIO="#7c3aed";
-    function A(o,st){ o.st=st; S.push(o); }
+    var S=[],Wr=[],i,Gy="#9ca3af",TEAL="#0d9488",VIO="#7c3aed",OR="#f97316";
+    function A(o,st){ if(o.f){ o.st=st; S.push(o); } else o.forEach(function(q){ q.st=st; S.push(q); }); }
     function wr(pts,c,r){ Wr.push({pts:pts,c:c||Gy,r:r||.05}); }
+    /* 1 CI: GitHub repository and runner */
     A(boxS(-12.5,.8,0,1.4,1.6,1.4,"#24292f"),0); A(cylS(-12.5,1.65,0,.4,.1,14,"#ffffff","y"),0);
     A(cylS(-9.6,.3,0,.95,.5,10,"#16a34a","y","#22c55e"),0); A(cylS(-9.6,.62,0,.35,.2,10,"#dcfce7","y"),0);
+    /* 2 data and training */
     for(i=0;i<3;i++) A(cylS(-5.2,.25+i*.5,3,.9,.4,18,"#94a3b8","y","#cbd5e1"),1);
-    A(boxS(-1.5,.5,3,1.9,1,1.9,"#6366f1",{top:"#818cf8"}),1); A(cylS(-1.5,1.3,3,.5,.5,3,"#e0e7ff","y"),1);
-    A(boxS(2.8,.6,3,2.3,1.2,2,"#0194e2",{top:"#38b6f5"}),2); A(cylS(2.3,1.5,3,.4,.5,14,"#bae6fd","y"),2); A(cylS(3.4,1.5,3,.4,.5,14,"#bae6fd","y"),2); A(cylS(2.8,2.1,3,.28,.1,5,"#fbbf24","y"),2);
+    A(cylS(-1.5,.3,3,1.15,.6,6,"#6366f1","y","#818cf8"),1); A(cylS(-1.5,.85,3,.5,.5,3,"#e0e7ff","y"),1);
+    /* 3 MLflow registry: stacked model versions, champion on top */
+    A(boxS(2.8,.15,3,2.4,.3,2,"#0194e2",{nx:2,nz:2}),2); A(boxS(2.8,.45,3,1.9,.3,1.5,"#7dd3fc"),2); A(boxS(2.8,.75,3,1.9,.3,1.5,"#38bdf8"),2); A(boxS(2.8,1.05,3,1.9,.3,1.5,"#fbbf24"),2); A(cylS(2.8,1.4,3,.3,.1,5,"#92400e","y"),2);
+    /* 4 documents and FAISS vector space */
     [0,1,2].forEach(function(k){ A(boxS(-5.2,.15+k*.3,-3,1.3,.25,1.6,k%2?"#e2e8f0":"#f8fafc",{top:"#ffffff"}),3); });
-    A(cylS(-1.5,.7,-3,1.2,1.4,22,VIO,"y","#a78bfa"),3);
-    [[-.5,.9],[.4,-.6],[-.9,-.5],[.7,.7],[0,0],[-.4,-1]].forEach(function(v){ A(boxS(-1.5+v[0],1.5,-3+v[1],.2,.12,.2,"#ede9fe"),3); });
-    A(boxS(2.8,.7,-3,2.2,1.4,2,"#1f2937"),4); A(cylS(2.8,1.45,-3,.6,.1,16,"#f59e0b","y"),4);
-    A(boxS(7.2,.6,0,2.2,1.2,2.4,"#059669",{top:"#34d399"}),5); A(cylS(7.2,1.4,0,.5,.5,3,"#d1fae5","y"),5);
-    A(boxS(11,.2,0,1.6,.3,.9,"#374151"),6); A(boxS(11,1.4,0,3.4,2.2,.25,"#1f2937"),6); A(boxS(11,1.4,-.14,3.1,1.9,.04,"#ff4b4b"),6);
-    A(boxS(10.6,1.8,-.18,1.7,.14,.02,"#ffffff"),6); A(boxS(10.9,1.45,-.18,2.2,.14,.02,"#ffe4e6"),6); A(boxS(11.1,1.1,-.18,1.4,.14,.02,"#ffffff"),6);
+    A(frameS(-1.5,1.1,-3,2.2,1.8,2.2,.08,VIO),3);
+    [[-.6,-.3,.5],[.5,.4,-.6],[-.2,.6,.2],[.7,-.5,.6],[0,0,-.3],[-.7,.1,-.7],[.3,-.6,-.2],[-.4,-.5,.7],[.6,.7,.4]].forEach(function(v,k){ A(boxS(-1.5+v[0],1.1+v[1],-3+v[2],.22,.22,.22,k===4?"#f59e0b":"#c4b5fd"),3); });
+    /* 5 phi3:mini as a small neural network */
+    var layers=[{x:2,n:3},{x:2.8,n:4},{x:3.6,n:2}],nodes=[];
+    layers.forEach(function(L,li){ var arr=[]; for(var k=0;k<L.n;k++){ var y=.5+(k-(L.n-1)/2)*.45+.5; arr.push([L.x,y+.3,-3]); A(boxS(L.x,y+.3,-3,.28,.28,.28,li===2?"#f59e0b":"#1f2937"),4); } nodes.push(arr); });
+    A(boxS(2.8,.08,-3,2.4,.16,1.6,"#e5e7eb"),4);
+    for(var l=0;l<2;l++) nodes[l].forEach(function(a){ nodes[l+1].forEach(function(b){ wr([a,b],"#6b7280",.025); }); });
+    /* 6 FastAPI gateway */
+    A(boxS(7.2,.05,0,2.6,.1,2.8,"#a7f3d0",{nx:2,nz:2}),5); A(boxS(7.2,.95,1.1,.3,1.8,.3,"#059669"),5); A(boxS(7.2,.95,-1.1,.3,1.8,.3,"#059669"),5); A(boxS(7.2,1.95,0,.3,.3,2.5,"#059669"),5); A(cylS(7.2,2.35,0,.3,.1,3,"#34d399","y"),5);
+    /* 7 Streamlit browser window */
+    A(boxS(11,.2,0,1.6,.3,.9,"#374151"),6); A(boxS(11,1.5,0,3.6,2.4,.25,"#1f2937"),6); A(boxS(11,1.35,-.14,3.3,2,.04,"#fff1f2"),6); A(boxS(11,2.4,-.15,3.3,.3,.05,"#ff4b4b"),6);
+    [-1.4,-1.2,-1].forEach(function(dx,k){ A(boxS(11+dx,2.4,-.19,.1,.1,.02,["#fecaca","#fde68a","#bbf7d0"][k]),6); });
+    A(boxS(10.3,1.8,-.19,1.5,.28,.02,"#ff4b4b"),6); A(boxS(11.5,1.35,-.19,1.7,.28,.02,"#cbd5e1"),6); A(boxS(10.4,.95,-.19,1.4,.28,.02,"#ff4b4b"),6);
     wr([[-8.6,.15,0],[-7,.15,0],[-7,.15,3],[-6.2,.15,3]],"#16a34a",.06); wr([[-7,.15,0],[-7,.15,-3],[-6.2,.15,-3]],"#16a34a",.06);
     wr([[-4.2,.15,3],[-2.5,.15,3]]); wr([[-.5,.15,3],[1.6,.15,3]]); wr([[4,.15,3],[5.4,.15,3],[5.4,.15,.6],[6.1,.15,.6]]);
-    wr([[-4.5,.15,-3],[-2.7,.15,-3]]); wr([[-.3,.15,-3],[1.7,.15,-3]]); wr([[3.9,.15,-3],[5.4,.15,-3],[5.4,.15,-.6],[6.1,.15,-.6]]); wr([[8.3,.15,0],[9.3,.15,0]]);
-    var paths=[mkpath([[-5.2,.5,3],[-1.5,.5,3],[2.8,.5,3],[5.4,.5,3],[5.4,.5,.6],[7.2,.5,.6],[7.2,.5,0],[9.6,.5,0]],TEAL),
-               mkpath([[-5.2,.5,-3],[-1.5,.5,-3],[2.8,.5,-3],[5.4,.5,-3],[5.4,.5,-.6],[7.2,.5,-.6],[7.2,.5,0],[9.6,.5,0]],VIO)],P=[];
+    wr([[-4.5,.15,-3],[-2.7,.15,-3]]); wr([[-.3,.15,-3],[1.4,.15,-3]]); wr([[4.1,.15,-3],[5.4,.15,-3],[5.4,.15,-.6],[6.1,.15,-.6]]); wr([[8.3,.15,0],[9.3,.15,0]]);
+    var paths=[mkpath([[-5.2,.5,3],[-1.5,.5,3],[2.8,.5,3],[5.4,.5,3],[5.4,.5,.6],[7.2,.5,.6],[7.2,.5,0],[9.6,.5,0]],TEAL,{sw:5,c1:OR}),
+               mkpath([[-5.2,.5,-3],[-1.5,.5,-3],[2.8,.5,-3],[5.4,.5,-3],[5.4,.5,-.6],[7.2,.5,-.6],[7.2,.5,0],[9.6,.5,0]],VIO,{sw:5,c1:OR})],P=[];
     for(i=0;i<22;i++) P.push({u:Math.random(),s:.03+Math.random()*.012,pi:i%2});
     var steps=[{rect:[-13.5,-1.8,-8.4,1.8]},{rect:[-6.5,1.5,-.3,4.6]},{rect:[1.4,1.8,4.3,4.2]},{rect:[-6.5,-4.6,-.3,-1.4]},{rect:[1.6,-4.3,4.1,-1.7]},{rect:[5.9,-1.8,8.5,1.8]},{rect:[9.2,-2.2,12.8,2.2]}];
-    var L=[{n:1,p:[-10.8,1.9,0]},{n:2,p:[-1.5,2.2,3]},{n:3,p:[2.8,2.9,3]},{n:4,p:[-1.5,2.1,-3]},{n:5,p:[2.8,2.3,-3]},{n:6,p:[7.2,2.3,0]},{n:7,p:[11,3.1,0]},
+    var L=[{n:1,p:[-10.8,1.9,0]},{n:2,p:[-1.5,2.2,3]},{n:3,p:[2.8,2.3,3]},{n:4,p:[-1.5,2.7,-3]},{n:5,p:[2.8,2.3,-3]},{n:6,p:[7.2,3,0]},{n:7,p:[11,3.1,0]},
       {k:null,t:"Churn data",p:[-5.2,1.9,3]},{k:null,t:"Documents",p:[-5.2,1.3,-3]},{k:null,t:"Kind Kubernetes cluster",p:[4.5,.2,-5.7]}];
     return {solid:true,solids:S,wires:Wr,labels:L,particles:P,paths:paths,steps:steps,
       zones:[{rect:[-7.4,-5.6,12.9,5.6],f:"#dbe9fb",s:"#7aa5e0"}],
@@ -961,7 +1000,14 @@ document.getElementById("theme").onclick = function(){
     var small=sc.solid&&W<560;
     sc.labels.forEach(function(l,i){ var nm=l.n?stepName(l):(l.k?t[l.k]:l.t); spans[i].textContent = l.n ? (small ? String(l.n) : l.n+" \u00b7 "+nm) : nm; spans[i].classList.toggle("active", !!l.n && l.n-1===activeStep); });
     wrap.setAttribute("aria-label", cap.textContent);
-    renderSteps();
+    renderSteps(); renderLegend();
+  }
+  function renderLegend(){
+    var box=document.getElementById("shlegend"), data=LEG[cur], L=lang(); box.innerHTML="";
+    if(!data){ box.style.display="none"; return; } box.style.display="grid";
+    data.forEach(function(g){ var row=document.createElement("div"); row.className="row"; var lead=document.createElement("span"); lead.className="lead"; lead.textContent=g.lead[L]; row.appendChild(lead);
+      g.items.forEach(function(it){ var e=document.createElement("span"); e.className="it"; var sw=document.createElement("i"); sw.className="sw"+(it.k==="sq"?"":" "+it.k); sw.style.background=it.c; e.appendChild(sw); e.appendChild(document.createTextNode(it.t[L])); row.appendChild(e); });
+      box.appendChild(row); });
   }
   function renderSteps(){
     var box=document.getElementById("shsteps"), chips=document.getElementById("shchips"), card=document.getElementById("shcard");
@@ -1008,13 +1054,14 @@ document.getElementById("theme").onclick = function(){
         items.push({d:(p0.vz+p1.vz)/2-.7,t:1,a:p0,b:p1,c:w.c,w:w.r*2*p0.k}); } } });
     sc.particles.forEach(function(p){ var pa=sc.paths[p.pi||0]; p.u=(p.u+p.s*.016*(reduce?0:1))%1; var d=p.u*pa.tot,k=1; while(k<pa.len.length-1&&pa.len[k]<d) k++;
       var f=(d-pa.len[k-1])/Math.max(.001,pa.len[k]-pa.len[k-1]),a=pa.pts[k-1],b=pa.pts[k],q=proj([a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f+.12,a[2]+(b[2]-a[2])*f]);
-      items.push({d:q.vz-1.2,t:2,q:q,c:pa.c}); });
+      items.push({d:q.vz-1.2,t:2,q:q,c:(pa.sw!==undefined&&k-1>=pa.sw)?pa.c1:pa.c,ring:!!pa.ring}); });
     items.sort(function(a,b){ return b.d-a.d; });
     ctx.lineCap="round"; ctx.lineJoin="round";
     items.forEach(function(it){
       if(it.t===0){ ctx.beginPath(); it.P.forEach(function(q,i){ i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y); }); ctx.closePath(); ctx.fillStyle=it.c; ctx.fill(); ctx.strokeStyle=it.c; ctx.lineWidth=.7; ctx.stroke(); }
       else if(it.t===1){ ctx.strokeStyle=it.c; ctx.lineWidth=Math.max(1.5,it.w); ctx.beginPath(); ctx.moveTo(it.a.x,it.a.y); ctx.lineTo(it.b.x,it.b.y); ctx.stroke(); }
-      else { ctx.fillStyle=it.c; ctx.strokeStyle="rgba(0,0,0,.55)"; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(it.q.x,it.q.y,Math.max(2.6,.13*it.q.k),0,6.3); ctx.fill(); ctx.stroke(); } });
+      else { var h=Math.max(3.4,.2*it.q.k); if(it.ring){ ctx.strokeStyle="#f59e0b"; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(it.q.x,it.q.y,h*1.75,0,6.3); ctx.stroke(); }
+        ctx.fillStyle=it.c; ctx.strokeStyle="rgba(0,0,0,.6)"; ctx.lineWidth=1.2; ctx.beginPath(); ctx.rect(it.q.x-h,it.q.y-h,h*2,h*2); ctx.fill(); ctx.stroke(); } });
     labelsPos();
   }
   function draw(t){
