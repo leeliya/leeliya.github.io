@@ -338,7 +338,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 <script>
 /* ---------- text, in two languages ---------- */
 var T = {
-  en:{tab_elec:"Glasses electronics",cap_elec:"The components inside my smart glasses, wired as in my circuit diagram. Amber dots show power flowing from the battery to the ESP32-CAM.",l_bat:"LiPo battery 3.7V 500mAh",l_sw:"ON/OFF switch (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Button 1: obstacles",l_b2:"Button 2: read text",l_b3:"Button 3: banknotes and coins",nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
+  en:{tab_elec:"Glasses electronics",cap_elec:"A 3D model of my glasses electronics, laid out like my circuit diagram. Drag to look around; amber dots show power flowing from the battery to the ESP32-CAM.",l_bat:"LiPo battery 3.7V 500mAh",l_sw:"ON/OFF switch (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Button 1: obstacles",l_b2:"Button 2: read text",l_b3:"Button 3: banknotes and coins",l_res:"3 x 2.4kΩ resistors",l_ch:"CH340 programmer",l_pc:"PC / laptop (USB)",nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
     tab_glasses:"Smart glasses",tab_pipe:"IoT pipeline",tab_rag:"Nexus-Ops RAG",
     cap_glasses:"Wireframe of my smart glasses: frame, camera module and electronics housings on the temples.",
     cap_pipe:"Sensors to Kafka, Flink, ClickHouse and Grafana. Amber dots are anomalies.",
@@ -399,7 +399,7 @@ var T = {
     contact_h:"Contact",contact_p:"I am available for a 6-month end-of-studies internship in Morocco from February 2027. The easiest way to reach me is LinkedIn.",
     foot:"Layla El Hajjaji, Mohammedia, Morocco",
     words:["data pipelines","microservices","AI agents","IoT systems"]},
-  fr:{tab_elec:"Électronique des lunettes",cap_elec:"Les composants de mes lunettes intelligentes, câblés comme dans mon schéma électrique. Les points ambre montrent le courant de la batterie vers l'ESP32-CAM.",l_bat:"Batterie LiPo 3,7V 500mAh",l_sw:"Interrupteur ON/OFF (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Bouton 1 : obstacles",l_b2:"Bouton 2 : lecture de texte",l_b3:"Bouton 3 : billets et pièces",nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
+  fr:{tab_elec:"Électronique des lunettes",cap_elec:"Un modèle 3D de l'électronique de mes lunettes, disposé comme mon schéma électrique. Faites glisser pour tourner ; les points ambre montrent le courant de la batterie vers l'ESP32-CAM.",l_bat:"Batterie LiPo 3,7V 500mAh",l_sw:"Interrupteur ON/OFF (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Bouton 1 : obstacles",l_b2:"Bouton 2 : lecture de texte",l_b3:"Bouton 3 : billets et pièces",l_res:"3 résistances 2,4kΩ",l_ch:"Programmeur CH340",l_pc:"PC portable (USB)",nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
     tab_glasses:"Lunettes intelligentes",tab_pipe:"Pipeline IoT",tab_rag:"RAG Nexus-Ops",
     cap_glasses:"Fil de fer de mes lunettes : monture, module caméra et boîtiers électroniques sur les branches.",
     cap_pipe:"Des capteurs vers Kafka, Flink, ClickHouse et Grafana. Les points ambre sont des anomalies.",
@@ -808,31 +808,81 @@ document.getElementById("theme").onclick = function(){
     return {shapes:shapes,labels:L,particles:P,flow:function(p){ var x=-7.6+p.u*15.2; return [x,p.y*(p.u<.25?1:.25),p.z]; },
       anomaly:function(p){ return p.an && p.u>.5; },D:25,figs:false,idea:false};
   }
-  function cyl(r,h,n,cx,cy,cz,ax){ var a,b,v=[],e=[],i;
-    for(i=0;i<n;i++){ var t=i/n*Math.PI*2,c=Math.cos(t)*r,sn=Math.sin(t)*r;
-      if(ax==="x"){ v.push([cx-h/2,cy+c,cz+sn]); v.push([cx+h/2,cy+c,cz+sn]); } else { v.push([cx+c,cy-h/2,cz+sn]); v.push([cx+c,cy+h/2,cz+sn]); }
-      e.push([2*i,2*((i+1)%n)]); e.push([2*i+1,2*((i+1)%n)+1]); if(i%3===0) e.push([2*i,2*i+1]); }
-    return {v:v,e:e}; }
+  /* ---------- solid (shaded) renderer used by the electronics scene ---------- */
+  var HC={};
+  function shadeC(c,k){ var h=HC[c]; if(!h){ h=HC[c]=[parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)]; }
+    k=Math.min(1.12,k); return "rgb("+(h[0]*k|0)+","+(h[1]*k|0)+","+(h[2]*k|0)+")"; }
+  function fin(sol,o){ if(o&&o.rx){ var ca=Math.cos(o.rx),sa=Math.sin(o.rx),py=o.py,pz=o.pz;
+      var rot=function(q){ var y=q[1]-py,z=q[2]-pz; q[1]=py+y*ca-z*sa; q[2]=pz+y*sa+z*ca; };
+      sol.f.forEach(function(f){ f.v.forEach(rot); }); rot(sol.ctr); } return sol; }
+  function boxS(cx,cy,cz,w,h,d,c,o){ o=o||{}; var x0=cx-w/2,x1=cx+w/2,y0=cy-h/2,y1=cy+h/2,z0=cz-d/2,z1=cz+d/2,f=[],nx=o.nx||1,nz=o.nz||1,tc=o.top||c,i,j;
+    for(i=0;i<nx;i++) for(j=0;j<nz;j++){ var a=x0+w*i/nx,b=x0+w*(i+1)/nx,e=z0+d*j/nz,g=z0+d*(j+1)/nz;
+      f.push({v:[[a,y1,e],[b,y1,e],[b,y1,g],[a,y1,g]],c:tc}); f.push({v:[[a,y0,e],[b,y0,e],[b,y0,g],[a,y0,g]],c:c}); }
+    f.push({v:[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]],c:c}); f.push({v:[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],c:c});
+    f.push({v:[[x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0]],c:c}); f.push({v:[[x1,y0,z0],[x1,y0,z1],[x1,y1,z1],[x1,y1,z0]],c:c});
+    return fin({f:f,ctr:[cx,cy,cz]},o); }
+  function cylS(cx,cy,cz,r,h,n,c,ax,cc){ var f=[],i,top=[],bot=[];
+    function pt(a,t){ return ax==="x"?[cx+t,cy+r*Math.cos(a),cz+r*Math.sin(a)]:ax==="z"?[cx+r*Math.cos(a),cy+r*Math.sin(a),cz+t]:[cx+r*Math.cos(a),cy+t,cz+r*Math.sin(a)]; }
+    for(i=0;i<n;i++){ var a=i/n*Math.PI*2,b=(i+1)/n*Math.PI*2;
+      f.push({v:[pt(a,-h/2),pt(b,-h/2),pt(b,h/2),pt(a,h/2)],c:c}); top.push(pt(a,h/2)); bot.push(pt(a,-h/2)); }
+    f.push({v:top,c:cc||c}); f.push({v:bot,c:cc||c}); return {f:f,ctr:[cx,cy,cz]}; }
+
   function sceneElec(){
-    var shapes=[],L=[],y=.25,i;
-    shapes.push(sh(cyl(.9,3.4,18,-9,1.2,-1,"y"),"--accent",.95));                                  /* LiPo battery */
-    shapes.push(sh(box(2.3,.2,1.5,-5.6,0,-1),"--text",.9)); shapes.push(sh(box(.6,.3,.5,-5.6,.2,-1.9),"--muted",.9)); /* TP4056 + USB */
-    shapes.push(sh(cyl(.17,1,8,-2.9,.3,-1,"x"),"--text",.95));                                      /* diode 1N5819 */
-    shapes.push(sh(box(2.3,.2,1.5,-.2,0,-1),"--text",.9)); shapes.push(sh(cyl(.45,.5,10,-.2,.4,-1,"y"),"--muted",.9)); /* MT3608 + inductor */
-    shapes.push(sh(box(1,.8,1,3.2,.3,-1),"--text",.95)); shapes.push(sh(box(.35,.3,.7,3.2,.8,-1),"--warn",.95)); /* switch */
-    shapes.push(sh(box(2.4,.2,3.6,7,0,1),"--accent",.9)); shapes.push(sh(box(1,.5,1,7,.35,.1),"--text",.9)); shapes.push(sh(circle(.25,12,7,.62,.1,"y"),"--warn",1)); /* ESP32-CAM */
-    var bx=[1,3,5],bz=[.6,1.4,2.2];
-    for(i=0;i<3;i++){ shapes.push(sh(box(.9,.35,.9,bx[i],.1,3.6),"--text",.9)); shapes.push(sh(circle(.28,12,bx[i],.3,3.6,"y"),["--accent","--warn","--accent"][i],1));
-      shapes.push(sh({v:[[bx[i],y,3.1],[bx[i],y,bz[i]],[5.8,y,bz[i]]],e:[[0,1],[1,2]]},"--accent",.7)); }
-    var path=[[-9,y,-1],[-6.9,y,-1],[-4.4,y,-1],[-3.4,y,-1],[-2.4,y,-1],[-1.35,y,-1],[.95,y,-1],[2.7,y,-1],[3.7,y,-1],[7,y,-1],[7,y,-.7]];
-    shapes.push(sh({v:path,e:path.slice(1).map(function(_,k){return [k,k+1];})},"--muted",.8));
-    var len=[0],tot=0; for(i=1;i<path.length;i++){ tot+=Math.abs(path[i][0]-path[i-1][0])+Math.abs(path[i][2]-path[i-1][2]); len.push(tot); }
-    L=[{k:"l_bat",p:[-9,3.2,-1]},{k:null,t:"TP4056",p:[-5.6,1.4,-1]},{k:null,t:"1N5819",p:[-2.9,1.2,-1]},{k:null,t:"MT3608",p:[-.2,2,-1]},{k:"l_sw",p:[3.2,2.1,-1]},{k:"l_esp",p:[7.6,2.2,.8]},{k:"l_b1",p:[.4,1,3.6]},{k:"l_b2",p:[3,1.9,3.6]},{k:"l_b3",p:[5.6,1,3.6]}];
-    var P=[];for(i=0;i<34;i++) P.push({u:Math.random(),y:0,z:0,an:true,s:.03+Math.random()*.02});
-    shapes.forEach(function(q){ q.v.forEach(function(w){ w[2]=-w[2]; }); }); L.forEach(function(l){ l.p[2]=-l.p[2]; });
-    return {shapes:shapes,labels:L,particles:P,flow:function(p){ var d=p.u*tot,k=1; while(k<len.length-1&&len[k]<d) k++;
-        var f=(d-len[k-1])/Math.max(.001,len[k]-len[k-1]),a=path[k-1],b=path[k]; return [a[0]+(b[0]-a[0])*f,y+.05,a[2]+(b[2]-a[2])*f]; },
-      anomaly:function(){return true;},D:27,figs:true,idea:false,yaw:-.3,pitch:.72};
+    var S=[],W_=[],L=[],i,Y=.25,K={red:"#d62828",blk:"#1b1b1b",blu:"#2563eb",pur:"#7c3aed",org:"#f97316"};
+    function add(x){ S.push(x); }
+    function wire(pts,c,r){ W_.push({pts:pts,c:c,r:r||.07}); }
+    var PCB="#1f4fb0",PCBT="#2a5fd0",CHIP="#1b1b1b",SIL="#bcc1c9";
+    /* battery */
+    add(cylS(-8.7,1.3,3.5,.75,2.6,22,"#1d4fd8","y","#9aa1ab")); add(cylS(-8.7,2.7,3.5,.25,.2,12,"#9aa1ab","y"));
+    /* TP4056 */
+    add(boxS(-5.05,.06,4,2.7,.12,2,PCB,{nx:3,nz:2,top:PCBT})); add(boxS(-5.3,.21,4,.8,.18,.8,CHIP)); add(boxS(-3.9,.27,4,.8,.3,.7,SIL));
+    add(boxS(-5.9,.2,4.5,.35,.14,.25,"#d8c27a")); add(boxS(-5.9,.2,3.5,.35,.14,.25,"#d8c27a"));
+    /* diode 1N5819 */
+    add(cylS(-1.7,.35,4.6,.17,1,10,"#1a1a1a","x")); add(cylS(-1.45,.35,4.6,.18,.14,10,"#c8ccd2","x"));
+    /* MT3608 */
+    add(boxS(1.5,.06,4,3,.12,2,PCB,{nx:3,nz:2,top:PCBT})); add(cylS(1.9,.42,3.8,.6,.6,16,"#2a2a2a","y","#3a3a3a"));
+    add(boxS(.6,.27,4.5,.45,.3,.45,"#3b82f6")); add(boxS(.5,.2,3.6,.7,.16,.5,CHIP));
+    /* switch KCD1 */
+    add(boxS(5.4,.4,4.6,1.3,.8,1.2,"#1a1a1a")); add(boxS(5.4,.85,4.6,.55,.1,.8,"#2b2b2b")); add(boxS(5.4,.92,4.45,.12,.04,.3,"#f4f4f4")); add(cylS(5.4,.92,4.8,.12,.04,10,"#f4f4f4","y"));
+    /* ESP32-CAM */
+    add(boxS(6.2,.06,.45,1.9,.12,3.8,"#1c1c1c",{nx:2,nz:4,top:"#262626"})); add(boxS(6.2,.22,1.5,1.2,.2,.9,SIL));
+    add(boxS(6.2,.34,.45,.9,.44,.9,"#0f0f0f")); add(cylS(6.2,.58,.45,.28,.05,14,"#050505","y","#16324f")); add(boxS(6.2,.18,-.4,.5,.08,.5,"#e08a3a"));
+    add(boxS(6.2,.2,-.9,1.2,.12,.4,"#dcdcdc")); add(boxS(6.2,.21,-1.28,.6,.18,.3,SIL));
+    /* buttons, resistors */
+    var bx=[-2.45,-.7,.9],bc=["#f2c230","#2eaa4b","#2459e0"],gp=[K.blu,K.pur,K.org],gz=[-.9,-1.1,-1.3];
+    for(i=0;i<3;i++){ var x=bx[i];
+      add(boxS(x,.2,-2.35,.95,.4,.95,"#8a8f98")); add(cylS(x,.5,-2.35,.32,.2,16,bc[i],"y"));
+      add(cylS(x,.3,.35,.14,.7,10,"#d9c9a0","z")); add(cylS(x,.3,.5,.145,.07,10,"#7a3b1b","z")); add(cylS(x,.3,.33,.145,.07,10,"#c0392b","z")); add(cylS(x,.3,.16,.145,.07,10,"#d4a017","z"));
+      wire([[x,Y,1.2],[x,.3,.7]],K.red,.05); wire([[x,.3,0],[x-.25,Y,-.25],[x-.25,Y,-1.95]],gp[i],.06);
+      wire([[x+.25,Y,-1.95],[x+.25,Y,gz[i]],[5.25,Y,gz[i]]],gp[i],.06);
+      wire([[x,Y,-2.8],[x,Y,-3.3]],K.blk,.06); }
+    /* CH340 programmer and laptop */
+    add(boxS(-6.55,.06,-1.95,2.3,.12,1.3,"#1b1b1b",{nx:2,top:"#252525"})); add(boxS(-8,.3,-1.95,1,.3,.95,SIL)); add(boxS(-6.6,.21,-1.95,.7,.18,.7,"#0d0d0d"));
+    [-1.65,-1.85,-2.05,-2.25].forEach(function(z){ add(boxS(-5.5,.18,z,.25,.1,.1,"#d4af37")); });
+    add(boxS(-7.6,.15,-4.3,3.6,.3,2.4,"#5a5f66",{nx:4,nz:3,top:"#6b7078"})); add(boxS(-7.6,.32,-3.9,3,.02,1,"#2b2e33")); add(boxS(-7.6,.32,-4.95,1,.02,.6,"#4a4f55"));
+    var tilt={rx:.28,py:.3,pz:-3.1};
+    add(boxS(-7.6,1.5,-3.1,3.4,2.2,.12,"#2a2d32",tilt)); add(boxS(-7.6,1.5,-3.18,3.1,1.9,.04,"#2f6fe0",tilt));
+    /* power wires (red) */
+    wire([[-8.7,2.8,3.5],[-8.7,2.8,4.5],[-5.9,Y,4.5]],K.red); wire([[-3.8,Y,4.6],[-2.2,Y,4.6]],K.red); wire([[-1.2,Y,4.6],[.2,Y,4.5]],K.red);
+    wire([[2.95,Y,4.5],[4.75,Y,4.5],[4.75,Y,4.6]],K.red); wire([[6.05,Y,4.6],[7.6,Y,4.6],[7.6,Y,1.4],[7.15,Y,1.4]],K.red);
+    wire([[bx[0],Y,1.2],[bx[2],Y,1.2],[4.2,Y,1.2],[4.2,Y,-.65],[5.25,Y,-.65]],K.red,.06);
+    /* ground wires (black) */
+    wire([[-8.7,Y,2.75],[-7.2,Y,2.75],[-7.2,Y,3.5],[-5.9,Y,3.5]],K.blk); wire([[-3.8,Y,3.45],[.2,Y,3.45]],K.blk);
+    wire([[-1.5,Y,3.45],[-1.5,Y,2.6],[4.6,Y,2.6],[4.6,Y,2.1],[5.25,Y,2.1]],K.blk,.06);
+    wire([[bx[0],Y,-3.3],[7.9,Y,-3.3],[7.9,Y,.91],[7.15,Y,.91]],K.blk,.06);
+    wire([[-5.4,Y,-2.25],[-5,Y,-2.25],[-5,Y,-4.4],[-5.8,Y,-4.4]],K.blk,.09);
+    wire([[-5.4,Y,-1.65],[-4.7,Y,-1.65],[-4.7,Y,-5.1],[6.2,Y,-5.1],[6.2,Y,-1.45]],K.pur,.05);
+    /* current dots follow the red power path */
+    var path=[[-8.7,2.8,3.5],[-8.7,2.8,4.5],[-5.9,Y,4.5],[-3.8,Y,4.6],[-1.2,Y,4.6],[.2,Y,4.5],[2.95,Y,4.5],[4.75,Y,4.6],[6.05,Y,4.6],[7.6,Y,4.6],[7.6,Y,1.4],[7.15,Y,1.4]];
+    var len=[0],tot=0; for(i=1;i<path.length;i++){ var a=path[i-1],b=path[i]; tot+=Math.sqrt(Math.pow(b[0]-a[0],2)+Math.pow(b[1]-a[1],2)+Math.pow(b[2]-a[2],2)); len.push(tot); }
+    var P=[]; for(i=0;i<30;i++) P.push({u:Math.random(),s:.03+Math.random()*.015});
+    L=[{k:"l_bat",p:[-8.7,3.2,3.5]},{k:null,t:"TP4056",p:[-5.05,.9,4.9]},{k:null,t:"1N5819",p:[-1.7,.8,4.6]},{k:null,t:"MT3608",p:[1.5,1.3,4.9]},{k:"l_sw",p:[5.4,2.3,4.6]},
+       {k:"l_esp",p:[6.2,.9,2.6]},{k:"l_res",p:[-.7,1,.9]},{k:"l_b1",p:[-3.1,.3,-3.8]},{k:"l_b2",p:[-.7,.3,-4.7]},{k:"l_b3",p:[1.7,.3,-3.8]},{k:"l_ch",p:[-6.55,.7,-.9]},{k:"l_pc",p:[-7.6,.3,-5.7]}];
+    /* centre the whole scene */
+    var SHX=1; function tr(q){ q[0]+=SHX; }
+    S.forEach(function(o){ o.f.forEach(function(f){ f.v.forEach(tr); }); tr(o.ctr); }); W_.forEach(function(w){ w.pts.forEach(tr); }); path.forEach(tr); L.forEach(function(l){ tr(l.p); });
+    return {solid:true,solids:S,wires:W_,labels:L,particles:P,path:path,len:len,tot:tot,slab:[[-10.2+SHX,-.02,-6],[8.9+SHX,-.02,-6],[8.9+SHX,-.02,5.9],[-10.2+SHX,-.02,5.9]],
+      D:30,figs:true,idea:false,yaw:-.28,pitch:.75};
   }
   function sceneRag(){
     var X=[-9,-5.4,-1.8,1.8,5.4,9],shapes=[],L=[],i;
@@ -856,21 +906,54 @@ document.getElementById("theme").onclick = function(){
     cur=k; sc=SC[k]; yaw=sc.yaw!==undefined?sc.yaw:-.5; pitch=sc.pitch!==undefined?sc.pitch:.28; vy=0; lab.innerHTML=""; spans=sc.labels.map(function(l){ var s=document.createElement("span"); lab.appendChild(s); return s; });
     idea.style.display = sc.idea ? "block" : "none"; figs.style.display = sc.figs ? "" : "none";
     document.querySelectorAll(".tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-tab")===k ? "true":"false"); });
-    D=sc.D; resize(); text(); draw(0); if(!reduce) start();
+    D=sc.D; wrap.style.height = sc.solid ? (window.innerWidth<640?"400px":"470px") : ""; resize(); text(); draw(0); if(!reduce) start();
   }
   function text(){
-    var t=T[document.documentElement.lang]||T.en; cap.textContent=t["cap_"+cur];
+    var t=T[document.documentElement.lang]||T.en; cap.textContent=t["cap_"+cur]; if(sc.solid&&W<560) cap.textContent += " " + sc.labels.map(function(l){ return l.k ? t[l.k] : l.t; }).join(" · ");
     sc.labels.forEach(function(l,i){ spans[i].textContent = l.k ? t[l.k] : l.t; });
     wrap.setAttribute("aria-label", cap.textContent);
   }
   function resize(){ var r=wrap.getBoundingClientRect(); dpr=Math.min(window.devicePixelRatio||1,2); W=r.width; H=r.height;
     canvas.width=W*dpr; canvas.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
-    F=Math.min(W*D/(cur==="rag"?24:cur==="elec"?21:17.5), H*D/9.2); if(cur==="glasses") F=Math.min(W*D/11.5,H*D/6.6); }
+    F=Math.min(W*D/(cur==="rag"?24:17.5), H*D/9.2); if(sc.solid) F=Math.min(W*D/23.5,H*D/12.5); if(cur==="glasses") F=Math.min(W*D/11.5,H*D/6.6); }
   function proj(p){ var cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
     var x1=cy*p[0]+sy*p[2], z1=-sy*p[0]+cy*p[2], y2=cp*p[1]+sp*z1, z2=-sp*p[1]+cp*z1, zz=z2+D, k=F/zz;
-    return {x:W/2+x1*k, y:H/2-y2*k, z:zz, k:k}; }
+    return {x:W/2+x1*k, y:H/2-y2*k, z:zz, k:k, vx:x1, vy:y2, vz:z2}; }
   function fade(z){ return Math.max(.3,Math.min(1,1.2-(z-D)/16)); }
+  function labelsPos(){
+    var small = sc.solid && W<560; lab.style.display = small ? "none" : ""; if(small) return;
+    sc.labels.forEach(function(l,i){ var q=proj(l.p); var hw=spans[i].offsetWidth/2+4; spans[i].style.left=Math.max(hw,Math.min(W-hw,q.x))+"px"; spans[i].style.top=Math.max(22,q.y)+"px"; });
+  }
+  function drawSolid(){
+    ctx.clearRect(0,H*0,W,H); ctx.globalAlpha=1;
+    var Ls=[-.35,.65,-.67],items=[],sp=sc.slab.map(proj);
+    ctx.beginPath(); sp.forEach(function(q,i){ i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y); }); ctx.closePath();
+    ctx.fillStyle="#eceff3"; ctx.fill(); ctx.strokeStyle="#c9ced6"; ctx.lineWidth=1; ctx.stroke();
+    sc.solids.forEach(function(so){ var cv=proj(so.ctr);
+      so.f.forEach(function(f){ var P=f.v.map(proj),n=P.length,ax=P[1].vx-P[0].vx,ay=P[1].vy-P[0].vy,az=P[1].vz-P[0].vz,bx=P[2].vx-P[0].vx,by=P[2].vy-P[0].vy,bz=P[2].vz-P[0].vz;
+        var nx=ay*bz-az*by,ny=az*bx-ax*bz,nz=ax*by-ay*bx,cx=0,cy=0,cz=0,i;
+        for(i=0;i<n;i++){ cx+=P[i].vx; cy+=P[i].vy; cz+=P[i].vz; } cx/=n; cy/=n; cz/=n;
+        if(nx*(cx-cv.vx)+ny*(cy-cv.vy)+nz*(cz-cv.vz)<0){ nx=-nx; ny=-ny; nz=-nz; }
+        if(nz>0) return;
+        var nl=Math.sqrt(nx*nx+ny*ny+nz*nz)||1, lit=(nx*Ls[0]+ny*Ls[1]+nz*Ls[2])/nl;
+        items.push({d:cz,t:0,P:P,c:shadeC(f.c,.5+.55*Math.max(0,lit))}); }); });
+    sc.wires.forEach(function(w){ for(var i=1;i<w.pts.length;i++){ var a=w.pts[i-1],b=w.pts[i],dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2],
+        m=Math.max(1,Math.ceil(Math.sqrt(dx*dx+dy*dy+dz*dz)/1.1));
+      for(var j=0;j<m;j++){ var p0=proj([a[0]+dx*j/m,a[1]+dy*j/m,a[2]+dz*j/m]),p1=proj([a[0]+dx*(j+1)/m,a[1]+dy*(j+1)/m,a[2]+dz*(j+1)/m]);
+        items.push({d:(p0.vz+p1.vz)/2-.7,t:1,a:p0,b:p1,c:w.c,w:w.r*2*p0.k}); } } });
+    sc.particles.forEach(function(p){ p.u=(p.u+p.s*.016*(reduce?0:1))%1; var d=p.u*sc.tot,k=1; while(k<sc.len.length-1&&sc.len[k]<d) k++;
+      var f=(d-sc.len[k-1])/Math.max(.001,sc.len[k]-sc.len[k-1]),a=sc.path[k-1],b=sc.path[k],q=proj([a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f+.12,a[2]+(b[2]-a[2])*f]);
+      items.push({d:q.vz-1.2,t:2,q:q}); });
+    items.sort(function(a,b){ return b.d-a.d; });
+    ctx.lineCap="round"; ctx.lineJoin="round";
+    items.forEach(function(it){
+      if(it.t===0){ ctx.beginPath(); it.P.forEach(function(q,i){ i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y); }); ctx.closePath(); ctx.fillStyle=it.c; ctx.fill(); ctx.strokeStyle=it.c; ctx.lineWidth=.7; ctx.stroke(); }
+      else if(it.t===1){ ctx.strokeStyle=it.c; ctx.lineWidth=Math.max(1.5,it.w); ctx.beginPath(); ctx.moveTo(it.a.x,it.a.y); ctx.lineTo(it.b.x,it.b.y); ctx.stroke(); }
+      else { ctx.fillStyle="#fbbf24"; ctx.strokeStyle="#b45309"; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(it.q.x,it.q.y,3.2,0,6.3); ctx.fill(); ctx.stroke(); } });
+    labelsPos();
+  }
   function draw(t){
+    if(sc.solid){ drawSolid(); return; }
     ctx.clearRect(0,0,W,H);
     sc.shapes.forEach(function(s){ var P=s.v.map(proj); ctx.strokeStyle=C[s.col]; ctx.lineWidth=1.3; 
       s.e.forEach(function(e){ var a=P[e[0]],b=P[e[1]]; ctx.globalAlpha=s.a*fade((a.z+b.z)/2); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }); });
@@ -878,7 +961,7 @@ document.getElementById("theme").onclick = function(){
     if(sc.particles){ sc.particles.forEach(function(p){ p.u=(p.u+p.s*.016*(reduce?0:1))%1; var q=proj(sc.flow(p));
         ctx.fillStyle = sc.anomaly(p) ? C["--warn"] : C["--accent"]; ctx.globalAlpha=.9*fade(q.z); ctx.beginPath(); ctx.arc(q.x,q.y,2.4,0,6.3); ctx.fill(); }); }
     ctx.globalAlpha=1;
-    sc.labels.forEach(function(l,i){ var q=proj(l.p); var hw=spans[i].offsetWidth/2+4; spans[i].style.left=Math.max(hw,Math.min(W-hw,q.x))+"px"; spans[i].style.top=Math.max(22,q.y)+"px"; });
+    labelsPos();
   }
   var raf=0,running=false,vis=true,t0=0,last=0;
   function tick(now){ if(!running) return; var dt=Math.min(.05,(now-last)/1000||.016); last=now; t0+=dt;
@@ -888,13 +971,13 @@ document.getElementById("theme").onclick = function(){
   function stop(){ running=false; cancelAnimationFrame(raf); }
   wrap.addEventListener("pointerdown",function(e){ drag=true; idle=0; lx=e.clientX; ly=e.clientY; wrap.classList.add("drag"); try{wrap.setPointerCapture(e.pointerId);}catch(_){} });
   wrap.addEventListener("pointermove",function(e){ if(!drag) return; var dx=e.clientX-lx,dy=e.clientY-ly; lx=e.clientX; ly=e.clientY;
-    yaw+=dx*.008; vy=dx*.008; pitch=Math.max(-1.1,Math.min(1.1,pitch+dy*.006)); if(reduce||!running) draw(t0); });
+    yaw+=dx*.008; vy=dx*.008; pitch=Math.max(sc.solid?.12:-1.1,Math.min(sc.solid?1.35:1.1,pitch+dy*.006)); if(reduce||!running) draw(t0); });
   function up(){ drag=false; idle=0; wrap.classList.remove("drag"); }
   wrap.addEventListener("pointerup",up); wrap.addEventListener("pointercancel",up);
   wrap.addEventListener("keydown",function(e){ if(e.key==="ArrowLeft"){yaw-=.15;draw(t0);} if(e.key==="ArrowRight"){yaw+=.15;draw(t0);} });
   wrap.tabIndex=0;
   document.querySelectorAll(".tabs button").forEach(function(b){ b.addEventListener("click",function(){ setScene(b.getAttribute("data-tab")); }); });
-  window.addEventListener("resize",function(){ resize(); draw(t0); });
+  window.addEventListener("resize",function(){ resize(); text(); draw(t0); });
   new IntersectionObserver(function(en){ vis=en[0].isIntersecting; vis?start():stop(); }).observe(wrap);
   document.addEventListener("visibilitychange",function(){ document.hidden?stop():start(); });
   var oldTheme=window.__sceneTheme;
