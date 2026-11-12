@@ -134,6 +134,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 .sw.ring{box-shadow:0 0 0 2px #f59e0b;margin:0 2px}
 .sw.line{width:20px;height:4px;border-radius:2px;border:0}
 .sw.blk{width:14px;height:14px;border-radius:4px}
+.bubble{position:absolute;transform:translate(-50%,-100%);background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:14px;padding:8px 14px;font-size:.9rem;font-weight:600;width:max-content;max-width:calc(100% - 16px);text-align:center;box-shadow:0 6px 18px -8px color-mix(in srgb,var(--accent) 60%,transparent)}
+.bubble::after{content:"";position:absolute;left:62%;bottom:-7px;width:12px;height:12px;background:var(--surface);border-right:1px solid var(--accent);border-bottom:1px solid var(--accent);transform:rotate(45deg)}
 /* ---------- 3D showcase ---------- */
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:0 0 12px;background:var(--surface)}
 .seg[hidden]{display:none}
@@ -196,16 +198,12 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
     </div>
 
     <div class="stage reveal" id="stage">
-      <div class="canvas-wrap" id="cwrap" role="img" aria-label="Animated 3D diagram of a real-time data pipeline: sensors, Kafka, Flink, ClickHouse, Grafana">
+      <div class="canvas-wrap" id="cwrap" role="img" aria-label="A 3D avatar waving hello">
         <canvas id="scene"></canvas>
         <div class="labels" id="labels"></div>
       </div>
       <div class="stage-cap">
-        <span data-i18n="stage_cap">My real-time IoT project, from sensors to dashboards.</span>
-        <span class="legend">
-          <span><i class="a"></i><span data-i18n="leg1">Normal reading</span></span>
-          <span><i class="b"></i><span data-i18n="leg2">Anomaly flagged by Flink</span></span>
-        </span>
+        <span data-i18n="stage_cap">A small 3D avatar to welcome you. Drag it to turn it around.</span>
       </div>
     </div>
   </div>
@@ -383,9 +381,9 @@ var T = {
     build_pre:"I build",
     lead:"I like the part where several pieces have to work together for real. I learn new tools quickly and I want to understand why a design works, not only that it runs.",
     cta_projects:"See my projects",
-    stage_cap:"My real-time IoT project, from sensors to dashboards.",
-    leg1:"Normal reading",leg2:"Anomaly flagged by Flink",
-    stage_alt:"Animated 3D diagram of a real-time data pipeline: sensors, Kafka, Flink, ClickHouse, Grafana",
+    stage_cap:"A small 3D avatar to welcome you. Drag it to turn it around.",
+    avatar_hi:"Hello! Welcome to my portfolio",
+    stage_alt:"A 3D avatar waving hello",
     about_h:"About",
     about_1:"I am in the final year of the engineering cycle in Big Data & Cloud Computing at ENSET Mohammedia (Université Hassan II). My work covers data engineering, backend microservices, and mobile and full-stack apps.",
     about_2:"What interests me most is where software, big data and AI meet: moving data reliably, serving it through clean services, and putting models and agents on top of it. My projects range from real-time data platforms to the server behind a robotics competition.",
@@ -444,9 +442,9 @@ var T = {
     build_pre:"Je construis",
     lead:"J'aime le moment où plusieurs composants doivent vraiment fonctionner ensemble. J'apprends vite de nouveaux outils et je veux comprendre pourquoi une conception fonctionne, pas seulement qu'elle tourne.",
     cta_projects:"Voir mes projets",
-    stage_cap:"Mon projet IoT temps réel, des capteurs aux tableaux de bord.",
-    leg1:"Mesure normale",leg2:"Anomalie détectée par Flink",
-    stage_alt:"Schéma 3D animé d'un pipeline de données temps réel : capteurs, Kafka, Flink, ClickHouse, Grafana",
+    stage_cap:"Un petit avatar 3D pour vous accueillir. Faites-le glisser pour le faire tourner.",
+    avatar_hi:"Bonjour ! Bienvenue sur mon portfolio",
+    stage_alt:"Un avatar 3D qui dit bonjour",
     about_h:"À propos",
     about_1:"Je suis en dernière année du cycle ingénieur Big Data & Cloud Computing à l'ENSET Mohammedia (Université Hassan II). Je travaille sur l'ingénierie des données, les microservices backend, et les applications mobiles et full-stack.",
     about_2:"Ce qui m'intéresse le plus, c'est la rencontre entre le logiciel, le big data et l'IA : déplacer les données de façon fiable, les exposer via des services propres, et construire des modèles et des agents par-dessus. Mes projets vont des plateformes de données temps réel au serveur d'une compétition de robotique.",
@@ -570,208 +568,103 @@ document.getElementById("theme").onclick = function(){
   }
 })();
 
-/* ---------- 3D pipeline scene (plain canvas, no library) ---------- */
+/* ---------- 3D avatar that waves hello (plain canvas, no library) ---------- */
 (function(){
-  var canvas = document.getElementById("scene");
-  var wrap = document.getElementById("cwrap");
-  var labelsEl = document.getElementById("labels");
-  var ctx = canvas.getContext && canvas.getContext("2d");
-  if(!ctx){ document.getElementById("stage").style.display = "none"; return; }
+  var canvas=document.getElementById("scene"), wrap=document.getElementById("cwrap"), labelsEl=document.getElementById("labels");
+  var ctx=canvas.getContext&&canvas.getContext("2d");
+  if(!ctx){ document.getElementById("stage").style.display="none"; return; }
+  var bubble=document.createElement("span"); bubble.className="bubble"; labelsEl.appendChild(bubble);
+  function setBubble(){ bubble.textContent=(T[root.lang]||T.en).avatar_hi; }
+  var W=0,H=0,dpr=1,D=17,F=300,yaw=0,pitch=.08,vy=0,drag=false,lx=0,ly=0,idle=0,t0=0;
+  var C={}; function readColors(){ var cs=getComputedStyle(root); ["--accent","--line","--surface"].forEach(function(k){ C[k]=cs.getPropertyValue(k).trim(); }); } readColors();
 
-  var C = {};                         /* theme colours, read from CSS */
-  function readColors(){
-    var cs = getComputedStyle(root);
-    ["--accent","--text","--muted","--warn"].forEach(function(k){ C[k] = cs.getPropertyValue(k).trim(); });
+  /* ---- solid primitives: {f:[{v:[[x,y,z]...],c:"#hex"}], ctr:[x,y,z]} ---- */
+  function sph(cx,cy,cz,r,c,o){ o=o||{}; var sg=o.sg||14,st=o.st||9,t0_=o.t0===undefined?0:o.t0,t1_=o.t1===undefined?Math.PI:o.t1,sy=o.sy||1,f=[],i,j;
+    function pt(i,j){ var th=t0_+(t1_-t0_)*i/st,ph=j/sg*Math.PI*2; return [cx+r*Math.sin(th)*Math.cos(ph),cy+r*sy*Math.cos(th),cz+r*Math.sin(th)*Math.sin(ph)]; }
+    for(i=0;i<st;i++) for(j=0;j<sg;j++) f.push({v:[pt(i,j),pt(i,j+1),pt(i+1,j+1),pt(i+1,j)],c:c});
+    return {f:f,ctr:[cx,cy,cz]}; }
+  function box(cx,cy,cz,w,h,d,c){ var x0=cx-w/2,x1=cx+w/2,y0=cy-h/2,y1=cy+h/2,z0=cz-d/2,z1=cz+d/2;
+    return {f:[{v:[[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]],c:c},{v:[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],c:c},{v:[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]],c:c},
+      {v:[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],c:c},{v:[[x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0]],c:c},{v:[[x1,y0,z0],[x1,y0,z1],[x1,y1,z1],[x1,y1,z0]],c:c}],ctr:[cx,cy,cz]}; }
+  function tube(a,b,r0,r1,n,c){ var d=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],L=Math.sqrt(d[0]*d[0]+d[1]*d[1]+d[2]*d[2]);d=[d[0]/L,d[1]/L,d[2]/L];
+    var h=Math.abs(d[0])<.9?[1,0,0]:[0,1,0],u=[d[1]*h[2]-d[2]*h[1],d[2]*h[0]-d[0]*h[2],d[0]*h[1]-d[1]*h[0]],ul=Math.sqrt(u[0]*u[0]+u[1]*u[1]+u[2]*u[2]);u=[u[0]/ul,u[1]/ul,u[2]/ul];
+    var v=[d[1]*u[2]-d[2]*u[1],d[2]*u[0]-d[0]*u[2],d[0]*u[1]-d[1]*u[0]],A=[],B=[],f=[],i;
+    for(i=0;i<n;i++){ var q=i/n*Math.PI*2,cs=Math.cos(q),sn=Math.sin(q);
+      A.push([a[0]+r0*(u[0]*cs+v[0]*sn),a[1]+r0*(u[1]*cs+v[1]*sn),a[2]+r0*(u[2]*cs+v[2]*sn)]); B.push([b[0]+r1*(u[0]*cs+v[0]*sn),b[1]+r1*(u[1]*cs+v[1]*sn),b[2]+r1*(u[2]*cs+v[2]*sn)]); }
+    for(i=0;i<n;i++) f.push({v:[A[i],A[(i+1)%n],B[(i+1)%n],B[i]],c:c}); f.push({v:A,c:c}); f.push({v:B.slice(),c:c});
+    return {f:f,ctr:[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2]}; }
+  function ring(cx,cy,cz,r,t,c,ax){ return tube(ax==="x"?[cx-t/2,cy,cz]:[cx,cy-t/2,cz],ax==="x"?[cx+t/2,cy,cz]:[cx,cy+t/2,cz],r,r,16,c); }
+
+  var SKIN="#d9a77f",HAIR="#2b2118",HOOD="#0f766e",HOOD2="#0b5f58",PANT="#374151",SHOE="#f3f4f6";
+  function build(t){
+    var S=[],bob=Math.sin(t*2)*.05,w=Math.sin(t*7)*.55;
+    S.push(tube([0,-3.15+.0,0],[0,-3,0],2.5,2.5,36,"#e5e7eb"));                                   /* platform */
+    /* legs and shoes */
+    S.push(tube([-.42,-1.2+bob,0],[-.42,-2.85,0],.34,.3,12,PANT)); S.push(tube([.42,-1.2+bob,0],[.42,-2.85,0],.34,.3,12,PANT));
+    S.push(box(-.42,-2.95,-.2,.7,.25,1.05,SHOE)); S.push(box(.42,-2.95,-.2,.7,.25,1.05,SHOE));
+    /* torso, hood, pocket */
+    S.push(tube([0,-1.35+bob,0],[0,.75+bob,0],.98,.8,24,HOOD)); S.push(sph(0,.75+bob,0,.8,HOOD,{t1:Math.PI/2,sy:.35,sg:20,st:4}));
+    S.push(box(0,-.55+bob,-.93,1.1,.38,.1,HOOD2));
+    /* neck and head */
+    S.push(tube([0,.8+bob,0],[0,1.1+bob,0],.26,.26,10,SKIN));
+    var hy=1.75+bob,hyaw=Math.sin(t*1.3)*.08;
+    S.push(sph(0,hy,0,.88,SKIN,{sg:18,st:12}));
+    S.push(sph(0,hy+.08,.06,.93,HAIR,{t0:0,t1:Math.PI*.62,sg:18,st:8}));                              /* hair cap */
+    S.push(sph(-.36+hyaw,hy+.02,-.8,.1,"#1f2937",{sg:8,st:6})); S.push(sph(.36+hyaw,hy+.02,-.8,.1,"#1f2937",{sg:8,st:6}));
+    S.push(sph(-.36+hyaw+.03,hy+.05,-.88,.035,"#ffffff",{sg:6,st:4})); S.push(sph(.36+hyaw+.03,hy+.05,-.88,.035,"#ffffff",{sg:6,st:4}));
+    S.push(sph(-.58,hy-.25,-.62,.14,"#f4a6a0",{sg:8,st:5,sy:.7})); S.push(sph(.58,hy-.25,-.62,.14,"#f4a6a0",{sg:8,st:5,sy:.7}));
+    [[-.3,.0],[-.16,-.08],[0,-.11],[.16,-.08],[.3,.0]].forEach(function(m){ S.push(box(m[0]+hyaw,hy-.38+m[1],-.84,.1,.06,.05,"#8b2f2f")); });   /* smile */
+    /* relaxed arm (avatar's left) */
+    S.push(tube([-1.0,.4+bob,0],[-1.28,-.55+bob,-.05],.26,.22,12,HOOD)); S.push(tube([-1.28,-.55+bob,-.05],[-1.3,-1.25+bob,-.1],.22,.2,12,HOOD)); S.push(sph(-1.3,-1.4+bob,-.1,.22,SKIN,{sg:10,st:7}));
+    /* waving arm (avatar's right): forearm swings around the elbow */
+    var sh=[1.0,.4+bob,0],el=[1.62,.95+bob,-.15],L=1.1,a=w,hand=[el[0]+L*Math.sin(a)*.8+.1,el[1]+L*Math.cos(a)*.95,el[2]-.1];
+    S.push(tube(sh,el,.26,.22,12,HOOD)); S.push(sph(el[0],el[1],el[2],.23,HOOD,{sg:10,st:7})); S.push(tube(el,[hand[0],hand[1]-.18,hand[2]],.22,.2,12,HOOD));
+    S.push(sph(hand[0],hand[1],hand[2],.3,SKIN,{sg:12,st:8})); [-.2,-.07,.07,.2].forEach(function(dx){ S.push(tube([hand[0]+dx*.9,hand[1]+.15,hand[2]],[hand[0]+dx*1.15,hand[1]+.5,hand[2]],.06,.05,6,SKIN)); });
+    /* floating symbols of my domain, orbiting */
+    var o=[{c:"#f5c400",k:0},{c:"#e6526f",k:1},{c:"#0194e2",k:2},{c:"#7c3aed",k:3}];
+    o.forEach(function(m){ var an=t*.6+m.k*Math.PI/2,x=Math.cos(an)*3.5,z=Math.sin(an)*2.4,y=.5+Math.sin(t*1.4+m.k)*.35;
+      if(m.k===0){ S.push(tube([x,y-.22,z],[x,y+.22,z],.3,.3,14,m.c)); }
+      if(m.k===1){ S.push(tube([x,y-.18,z],[x,y+.18,z],.34,.34,6,m.c)); }
+      if(m.k===2){ S.push(box(x,y,z,.5,.5,.5,m.c)); }
+      if(m.k===3){ S.push(sph(x,y,z,.3,m.c,{sg:10,st:7})); } });
+    return S;
   }
-  readColors();
-
-  var X = [-8,-4,0,4,8];                                       /* stage positions along the pipeline */
-  var NAMES = ["Sensors","Kafka","Flink","ClickHouse","Grafana"];
-  var labels = NAMES.map(function(n){
-    var s = document.createElement("span"); s.textContent = n; labelsEl.appendChild(s); return s;
-  });
-
-  /* --- geometry helpers --- */
-  function box(w,h,d){
-    var x=w/2,y=h/2,z=d/2;
-    return {v:[[-x,-y,-z],[x,-y,-z],[x,y,-z],[-x,y,-z],[-x,-y,z],[x,-y,z],[x,y,z],[-x,y,z]],
-      e:[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]],
-      f:[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]]};
+  var HC={}; function shade(c,k){ var h=HC[c]; if(!h){ h=HC[c]=[parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)]; } k=Math.min(1.12,k); return "rgb("+(h[0]*k|0)+","+(h[1]*k|0)+","+(h[2]*k|0)+")"; }
+  function proj(p){ var cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+    var x1=cy*p[0]+sy*p[2],z1=-sy*p[0]+cy*p[2],y2=cp*p[1]+sp*z1,z2=-sp*p[1]+cp*z1,zz=z2+D,k=F/zz;
+    return {x:W/2+x1*k,y:H/2-(y2-.2)*k,k:k,vx:x1,vy:y2,vz:z2}; }
+  function draw(t){
+    ctx.clearRect(0,0,W,H); var S=build(t),items=[],Ls=[-.35,.65,-.67];
+    S.forEach(function(so){ var cv=proj(so.ctr);
+      so.f.forEach(function(f){ var P=f.v.map(proj),n=P.length,ax=P[1].vx-P[0].vx,ay=P[1].vy-P[0].vy,az=P[1].vz-P[0].vz,bx=P[2].vx-P[0].vx,by=P[2].vy-P[0].vy,bz=P[2].vz-P[0].vz;
+        var nx=ay*bz-az*by,ny=az*bx-ax*bz,nz=ax*by-ay*bx,cx=0,cy=0,cz=0,i;
+        for(i=0;i<n;i++){ cx+=P[i].vx; cy+=P[i].vy; cz+=P[i].vz; } cx/=n; cy/=n; cz/=n;
+        if(nx*(cx-cv.vx)+ny*(cy-cv.vy)+nz*(cz-cv.vz)<0){ nx=-nx; ny=-ny; nz=-nz; }
+        if(nz>0) return;
+        var nl=Math.sqrt(nx*nx+ny*ny+nz*nz)||1,lit=(nx*Ls[0]+ny*Ls[1]+nz*Ls[2])/nl;
+        items.push({d:cz,P:P,c:shade(f.c,.55+.5*Math.max(0,lit))}); }); });
+    items.sort(function(a,b){ return b.d-a.d; });
+    items.forEach(function(it){ ctx.beginPath(); it.P.forEach(function(q,i){ i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y); }); ctx.closePath(); ctx.fillStyle=it.c; ctx.fill(); ctx.strokeStyle=it.c; ctx.lineWidth=.7; ctx.stroke(); });
+    var q=proj([-2.6,3.4,0]); var hw=bubble.offsetWidth/2+8; bubble.style.left=Math.max(hw,Math.min(W-hw,q.x))+"px"; bubble.style.top=Math.max(34,q.y)+"px";
   }
-  function octa(r){
-    return {v:[[r,0,0],[-r,0,0],[0,r,0],[0,-r,0],[0,0,r],[0,0,-r]],
-      e:[[0,2],[0,3],[0,4],[0,5],[1,2],[1,3],[1,4],[1,5],[2,4],[2,5],[3,4],[3,5]]};
-  }
-  function ring(r,n){
-    var v=[],e=[];
-    for(var i=0;i<n;i++){ var a=i/n*Math.PI*2; v.push([0,r*Math.cos(a),r*Math.sin(a)]); e.push([i,(i+1)%n]); }
-    return {v:v,e:e};
-  }
-  function mk(g,pos,col,o){
-    var s = {v:g.v,e:g.e,f:g.f||null,pos:pos,rx:0,ry:0,rz:0,s:1,col:col,alpha:.9,fill:!!g.f};
-    if(o) for(var k in o) s[k]=o[k];
-    return s;
-  }
-
-  var shapes = [], sensors = [], kafka = [], cols = [];
-  var ys=[-2,-1.2,-.4,.4,1.2,2], zs=[.8,-.9,.5,-.6,.9,-.8];
-  for(var i=0;i<6;i++){ var sh=mk(box(.5,.5,.5),[X[0],ys[i],zs[i]],"--muted"); sensors.push(sh); shapes.push(sh); }
-  for(i=0;i<3;i++){ var r=mk(ring(1.15,30),[X[1]+(i-1)*.7,0,0],"--accent"); kafka.push(r); shapes.push(r); }
-  var flinkOuter = mk(octa(1.25),[X[2],0,0],"--accent"), flinkInner = mk(octa(.6),[X[2],0,0],"--accent",{alpha:.7});
-  shapes.push(flinkOuter, flinkInner);
-  var hs=[1.3,2.4,1.8,2.9,2.1];
-  for(i=0;i<5;i++){ var c=mk(box(.46,hs[i],.46),[X[3]+(i-2)*.72,-2.4+hs[i]/2,0],"--accent"); cols.push(c); shapes.push(c); }
-  shapes.push(mk(box(3.4,2.4,.06),[X[4],0,0],"--accent",{alpha:.8}));
-  var graf = {v:[],e:[],pos:[X[4],0,0],rx:0,ry:0,rz:0,s:1,col:"--warn",alpha:1,fill:false,width:2};
-  for(i=0;i<36;i++){ graf.v.push([0,0,0]); if(i) graf.e.push([i-1,i]); }
-  shapes.push(graf);
-
-  var grid = {v:[],e:[],pos:[0,-2.4,0],rx:0,ry:0,rz:0,s:1,col:"--muted",alpha:.22,fill:false};
-  (function(){
-    var k=0;
-    for(var z=-4;z<=4;z++){ grid.v.push([-10,0,z],[10,0,z]); grid.e.push([k,k+1]); k+=2; }
-    for(var x=-10;x<=10;x+=1){ grid.v.push([x,0,-4],[x,0,4]); grid.e.push([k,k+1]); k+=2; }
-  })();
-
-  /* --- particles: readings flowing left to right --- */
-  var N = 150, P = [];
-  function respawn(p){ p.y=(Math.random()*2-1)*2.1; p.z=(Math.random()*2-1)*1.4; p.an=Math.random()<.1; }
-  for(i=0;i<N;i++){ var p={s:Math.random(),v:.05+Math.random()*.05,ph:Math.random()*6.28}; respawn(p); P.push(p); }
-  var pulse = 0;
-
-  /* --- camera --- */
-  var W=0,H=0,F=0,D=22,dpr=1,yaw=0,pitch=.27,oy=0;
-  var mx=0,my=0,tmx=0,tmy=0;
-  function resize(){
-    var w = wrap.clientWidth;
-    var h = Math.round(Math.min(340, Math.max(190, w*.44)));
-    wrap.style.height = h+"px";
-    dpr = Math.min(window.devicePixelRatio||1, 2);
-    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
-    W=w; H=h; F = W*D/21;
-    oy = -H*.07;
-    if(!running) draw(performance.now()/1000, 0);
-  }
-  function proj(p){
-    var x=p[0], y=p[1], z=p[2];
-    var c=Math.cos(yaw), s=Math.sin(yaw);
-    var x1=c*x+s*z, z1=-s*x+c*z;
-    var cp=Math.cos(pitch), sp=Math.sin(pitch);
-    var y2=cp*y+sp*z1, z2=-sp*y+cp*z1;
-    var zz=z2+D, k=F/zz;
-    return {x:W/2+x1*k, y:H/2-y2*k+oy, z:zz, k:k};
-  }
-  function fade(z){ return Math.max(.35, Math.min(1, 1.15-(z-D)/18)); }
-  function tv(v,sh){
-    var x=v[0]*sh.s,y=v[1]*sh.s,z=v[2]*sh.s,c,s;
-    if(sh.rx){ c=Math.cos(sh.rx); s=Math.sin(sh.rx); var y1=c*y-s*z, z1=s*y+c*z; y=y1; z=z1; }
-    if(sh.ry){ c=Math.cos(sh.ry); s=Math.sin(sh.ry); var x1=c*x+s*z, z2=-s*x+c*z; x=x1; z=z2; }
-    if(sh.rz){ c=Math.cos(sh.rz); s=Math.sin(sh.rz); var x2=c*x-s*y, y3=s*x+c*y; x=x2; y=y3; }
-    return [x+sh.pos[0], y+sh.pos[1], z+sh.pos[2]];
-  }
-  function drawShape(sh){
-    var Pp = sh.v.map(function(v){ return proj(tv(v,sh)); });
-    var color = C[sh.col];
-    if(sh.fill && sh.f){
-      ctx.fillStyle = color; ctx.globalAlpha = .06;
-      sh.f.forEach(function(f){
-        ctx.beginPath(); ctx.moveTo(Pp[f[0]].x,Pp[f[0]].y);
-        for(var j=1;j<f.length;j++) ctx.lineTo(Pp[f[j]].x,Pp[f[j]].y);
-        ctx.closePath(); ctx.fill();
-      });
-    }
-    ctx.strokeStyle = color; ctx.lineWidth = sh.width || 1.3;
-    sh.e.forEach(function(e){
-      var a=Pp[e[0]], b=Pp[e[1]];
-      ctx.globalAlpha = sh.alpha*fade((a.z+b.z)/2);
-      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-    });
-  }
-
-  function draw(t,dt){
-    /* animate */
-    mx += (tmx-mx)*.06; my += (tmy-my)*.06;
-    yaw = Math.sin(t*.25)*.1 + mx*.2; pitch = .27 + my*.07;
-    sensors.forEach(function(s,i){ s.s = 1+.18*Math.sin(t*3+i*1.3); });
-    kafka.forEach(function(r,i){ r.rz = Math.sin(t*.9+i)*.18; r.ry = Math.cos(t*.7+i)*.15; });
-    pulse = Math.max(0, pulse - dt*2.2);
-    flinkOuter.ry += dt*.6; flinkOuter.rx += dt*.25; flinkOuter.s = 1+.14*pulse;
-    flinkInner.ry -= dt*.9; flinkInner.rz += dt*.4; flinkInner.s = 1+.2*pulse;
-    cols.forEach(function(c,i){ c.s = 1; });
-    for(var i=0;i<graf.v.length;i++){
-      var u=i/(graf.v.length-1), x=(u-.5)*3;
-      var y=.55*Math.sin(u*9+t*2.2)*.6 + .25*Math.sin(u*17-t*1.3);
-      var spike = Math.exp(-Math.pow((u-((t*.18)%1)),2)*900)*.7;
-      graf.v[i][0]=x; graf.v[i][1]=y+spike;
-    }
-
-    /* paint */
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.clearRect(0,0,W,H);
-    drawShape(grid);
-    shapes.forEach(drawShape);
-
-    var normalBefore = C["--accent"];
-    P.forEach(function(p){
-      var prev = p.s;
-      p.s += p.v*dt;
-      if(p.s>1){ p.s-=1; respawn(p); prev = 0; }
-      var x = -8+16*p.s;
-      if(p.an && prev<=.5 && p.s>.5) pulse = 1;
-      var d = 99; for(var k=0;k<5;k++) d = Math.min(d, Math.abs(x-X[k]));
-      var spread = .3+.7*Math.min(d/1.4,1);
-      var wp = [x, p.y*spread+.12*Math.sin(t*2+p.ph), p.z*spread];
-      var q = proj(wp);
-      var after = x > X[2]-.2;
-      var color = (after && p.an) ? C["--warn"] : (after ? C["--text"] : normalBefore);
-      var rad = Math.max(1.4,.085*q.k);
-      if(after && p.an){
-        ctx.globalAlpha = .22*fade(q.z); ctx.fillStyle = color;
-        ctx.beginPath(); ctx.arc(q.x,q.y,rad*2.4,0,6.283); ctx.fill();
-      }
-      ctx.globalAlpha = fade(q.z)*(after && !p.an ? .55 : .95); ctx.fillStyle = color;
-      ctx.beginPath(); ctx.arc(q.x,q.y,rad,0,6.283); ctx.fill();
-    });
-    ctx.globalAlpha = 1;
-
-    /* labels follow the 3D positions */
-    for(var j=0;j<5;j++){
-      var l = proj([X[j],-2.95,0]);
-      labels[j].style.left = l.x+"px"; labels[j].style.top = Math.min(H-18,l.y)+"px";
-    }
-  }
-
-  /* --- loop control --- */
-  var running = false, last = 0, visible = true, raf = 0;
-  function loop(now){
-    var t = now/1000, dt = Math.min(.05, last ? t-last : 0); last = t;
-    draw(t, dt);
-    raf = requestAnimationFrame(loop);
-  }
-  function start(){ if(reduce || running || !visible) return; running = true; last = 0; raf = requestAnimationFrame(loop); }
-  function stop(){ running = false; cancelAnimationFrame(raf); }
-
-  window.__sceneTheme = function(){ readColors(); if(!running) draw(performance.now()/1000,0); };
-  if(window.matchMedia){
-    var mq = window.matchMedia("(prefers-color-scheme: dark)");
-    if(mq.addEventListener) mq.addEventListener("change", window.__sceneTheme);
-  }
-  if("ResizeObserver" in window) new ResizeObserver(resize).observe(wrap); else window.addEventListener("resize", resize);
-  if("IntersectionObserver" in window){
-    new IntersectionObserver(function(en){ visible = en[0].isIntersecting; visible ? start() : stop(); }).observe(wrap);
-  }
-  document.addEventListener("visibilitychange", function(){ document.hidden ? stop() : start(); });
-  wrap.addEventListener("pointermove", function(e){
-    var r = wrap.getBoundingClientRect();
-    tmx = ((e.clientX-r.left)/r.width-.5)*2; tmy = ((e.clientY-r.top)/r.height-.5)*2;
-  });
-  wrap.addEventListener("pointerleave", function(){ tmx = 0; tmy = 0; });
-
-  resize();
-  if(reduce){
-    /* one still frame, with particles spread along the pipeline */
-    draw(2.5, 0);
-  } else { start(); }
+  function resize(){ var r=wrap.getBoundingClientRect(); dpr=Math.min(window.devicePixelRatio||1,2); W=r.width; H=r.height; canvas.width=W*dpr; canvas.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); F=Math.min(H*D/7.4,W*D/9.5); }
+  var reduce_=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches,raf=0,running=false,vis=true,last=0;
+  function tick(now){ if(!running) return; var dt=Math.min(.05,(now-last)/1000||.016); last=now; t0+=dt;
+    if(!drag){ idle+=dt; if(Math.abs(vy)>.0005){ yaw+=vy; vy*=.94; } else { yaw+=(Math.sin(t0*.7)*.35-yaw)*Math.min(1,dt*1.5); } }
+    draw(t0); raf=requestAnimationFrame(tick); }
+  function start(){ if(reduce_||running||!vis) return; running=true; last=performance.now(); raf=requestAnimationFrame(tick); }
+  function stop(){ running=false; cancelAnimationFrame(raf); }
+  wrap.style.cursor="grab"; wrap.style.touchAction="pan-y";
+  wrap.addEventListener("pointerdown",function(e){ drag=true; idle=0; lx=e.clientX; ly=e.clientY; wrap.style.cursor="grabbing"; try{wrap.setPointerCapture(e.pointerId);}catch(_){} });
+  wrap.addEventListener("pointermove",function(e){ if(!drag) return; var dx=e.clientX-lx,dy=e.clientY-ly; lx=e.clientX; ly=e.clientY; yaw+=dx*.01; vy=dx*.01; pitch=Math.max(-.3,Math.min(.7,pitch+dy*.004)); if(reduce_) draw(t0); });
+  function up(){ drag=false; wrap.style.cursor="grab"; }
+  wrap.addEventListener("pointerup",up); wrap.addEventListener("pointercancel",up);
+  window.addEventListener("resize",function(){ resize(); draw(t0); });
+  new IntersectionObserver(function(en){ vis=en[0].isIntersecting; vis?start():stop(); }).observe(wrap);
+  document.addEventListener("visibilitychange",function(){ document.hidden?stop():start(); });
+  window.__sceneTheme=function(){ readColors(); setBubble(); draw(t0); };
+  document.getElementById("lang").addEventListener("click",function(){ setTimeout(setBubble,0); });
+  setBubble(); resize(); t0=reduce_?1.9:0; draw(t0); start();
 })();
 
 /* ---------- 3D showcase: tabs, drag to rotate ---------- */
