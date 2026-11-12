@@ -169,7 +169,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
     <nav>
       <span class="links-nav">
         <a href="#projects" data-i18n="nav_projects">Projects</a>
-        <a href="#showcase" data-i18n="nav_3d">3D</a>
+        <a href="#showcase" data-i18n="nav_3d">Architecture</a>
         <a href="#skills" data-i18n="nav_skills">Skills</a>
         <a href="#contact" data-i18n="nav_contact">Contact</a>
       </span>
@@ -302,8 +302,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
   </section>
 
   <section id="showcase" class="reveal">
-    <h2 data-i18n="sh_h">My projects in 3D</h2>
-    <p class="sh-lede" data-i18n="sh_p">Drag to rotate. Each scene is drawn live in your browser.</p>
+    <h2 data-i18n="sh_h">Inside my projects</h2>
+    <p class="sh-lede" data-i18n="sh_p">The architecture, data flows and hardware design behind my projects, explored in 3D. Drag to rotate; every scene is drawn live in your browser.</p>
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-tab="glasses" data-i18n="tab_glasses">Smart glasses</button>
       <button role="tab" aria-selected="false" data-tab="pipe" data-i18n="tab_pipe">IoT pipeline</button>
@@ -367,7 +367,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 <script>
 /* ---------- text, in two languages ---------- */
 var T = {
-  en:{seg_frame:"Mechanical design",seg_elec:"Electronics",cap_elec:"A 3D model of my glasses electronics, laid out like my circuit diagram. Drag to look around; amber squares show power flowing from the battery to the ESP32-CAM.",l_bat:"LiPo battery 3.7V 500mAh",l_sw:"ON/OFF switch (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Button 1: obstacles",l_b2:"Button 2: read text",l_b3:"Button 3: banknotes and coins",l_res:"3 x 2.4kΩ resistors",l_ch:"CH340 programmer",l_pc:"PC / laptop (USB)",nav_3d:"3D",sh_h:"My projects in 3D",sh_p:"Drag to rotate. Each scene is drawn live in your browser.",
+  en:{seg_frame:"Mechanical design",seg_elec:"Electronics",cap_elec:"A 3D model of my glasses electronics, laid out like my circuit diagram. Drag to look around; amber squares show power flowing from the battery to the ESP32-CAM.",l_bat:"LiPo battery 3.7V 500mAh",l_sw:"ON/OFF switch (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Button 1: obstacles",l_b2:"Button 2: read text",l_b3:"Button 3: banknotes and coins",l_res:"3 x 2.4kΩ resistors",l_ch:"CH340 programmer",l_pc:"PC / laptop (USB)",nav_3d:"Architecture",sh_h:"Inside my projects",sh_p:"The architecture, data flows and hardware design behind my projects, explored in 3D. Drag to rotate; every scene is drawn live in your browser.",
     tab_glasses:"Smart glasses",tab_pipe:"IoT pipeline",tab_rag:"Nexus-Ops workflow",
     cap_glasses:"Wireframe of my smart glasses: frame, camera module and electronics housings on the temples.",
     cap_pipe:"How one reading travels through my IoT platform, from a sensor to the Grafana dashboard. Each square is a reading; its colour is the sensor type. Pick a step to see what happens.",
@@ -428,7 +428,7 @@ var T = {
     contact_h:"Contact",contact_p:"I am available for a 6-month end-of-studies internship from February 2027. The easiest way to reach me is LinkedIn.",
     foot:"Layla El Hajjaji, Mohammedia, Morocco",
     words:["data pipelines","microservices","AI agents","IoT systems"]},
-  fr:{seg_frame:"Conception mécanique",seg_elec:"Électronique",cap_elec:"Un modèle 3D de l'électronique de mes lunettes, disposé comme mon schéma électrique. Faites glisser pour tourner ; les carrés ambre montrent le courant de la batterie vers l'ESP32-CAM.",l_bat:"Batterie LiPo 3,7V 500mAh",l_sw:"Interrupteur ON/OFF (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Bouton 1 : obstacles",l_b2:"Bouton 2 : lecture de texte",l_b3:"Bouton 3 : billets et pièces",l_res:"3 résistances 2,4kΩ",l_ch:"Programmeur CH340",l_pc:"PC portable (USB)",nav_3d:"3D",sh_h:"Mes projets en 3D",sh_p:"Faites glisser pour tourner. Chaque scène est dessinée en direct dans votre navigateur.",
+  fr:{seg_frame:"Conception mécanique",seg_elec:"Électronique",cap_elec:"Un modèle 3D de l'électronique de mes lunettes, disposé comme mon schéma électrique. Faites glisser pour tourner ; les carrés ambre montrent le courant de la batterie vers l'ESP32-CAM.",l_bat:"Batterie LiPo 3,7V 500mAh",l_sw:"Interrupteur ON/OFF (KCD1)",l_esp:"ESP32-CAM (AI-Thinker)",l_b1:"Bouton 1 : obstacles",l_b2:"Bouton 2 : lecture de texte",l_b3:"Bouton 3 : billets et pièces",l_res:"3 résistances 2,4kΩ",l_ch:"Programmeur CH340",l_pc:"PC portable (USB)",nav_3d:"Architecture",sh_h:"Dans les coulisses de mes projets",sh_p:"L'architecture, les flux de données et la conception matérielle derrière mes projets, à explorer en 3D. Faites glisser pour tourner ; chaque scène est dessinée en direct dans votre navigateur.",
     tab_glasses:"Lunettes intelligentes",tab_pipe:"Pipeline IoT",tab_rag:"Workflow Nexus-Ops",
     cap_glasses:"Fil de fer de mes lunettes : monture, module caméra et boîtiers électroniques sur les branches.",
     cap_pipe:"Le trajet d'une mesure dans ma plateforme IoT, du capteur au tableau de bord Grafana. Chaque carré est une mesure ; sa couleur indique le type de capteur. Choisissez une étape pour voir ce qui se passe.",
