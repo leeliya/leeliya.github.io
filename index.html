@@ -134,8 +134,17 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 .sw.ring{box-shadow:0 0 0 2px #f59e0b;margin:0 2px}
 .sw.line{width:20px;height:4px;border-radius:2px;border:0}
 .sw.blk{width:14px;height:14px;border-radius:4px}
-.bubble{position:absolute;transform:translate(-50%,-100%);background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:14px;padding:8px 14px;font-size:.9rem;font-weight:600;width:max-content;max-width:calc(100% - 16px);text-align:center;box-shadow:0 6px 18px -8px color-mix(in srgb,var(--accent) 60%,transparent)}
-.bubble::after{content:"";position:absolute;left:62%;bottom:-7px;width:12px;height:12px;background:var(--surface);border-right:1px solid var(--accent);border-bottom:1px solid var(--accent);transform:rotate(45deg)}
+#buddy{position:fixed;left:0;bottom:0;width:0;height:300px;z-index:60;pointer-events:none}
+#buddy canvas{position:absolute;left:-110px;bottom:0;width:220px;height:300px;pointer-events:none}
+#buddy .hit{position:absolute;bottom:6px;background:none;border:0;padding:0;border-radius:30px;pointer-events:auto;cursor:grab;touch-action:none}
+#buddy .hit:active{cursor:grabbing}
+#buddy .hit:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#buddy .bubble{position:absolute;left:0;transform:translateX(calc(-50% + var(--bx,0px)));width:max-content;max-width:min(260px,calc(100vw - 24px));text-align:center;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:14px;padding:8px 14px;font-size:.9rem;font-weight:600;line-height:1.35;box-shadow:0 8px 22px -10px color-mix(in srgb,var(--accent) 60%,transparent);opacity:0;transition:opacity .25s;pointer-events:none}
+#buddy .bubble.on{opacity:1}
+#buddy .bubble::after{content:"";position:absolute;left:calc(50% - var(--bx,0px));bottom:-7px;width:12px;height:12px;margin-left:-6px;background:var(--surface);border-right:1px solid var(--accent);border-bottom:1px solid var(--accent);transform:rotate(45deg)}
+#buddyToggle{position:fixed;right:12px;bottom:12px;z-index:61;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:1.1rem;cursor:pointer;box-shadow:0 4px 14px -6px rgba(0,0,0,.35)}
+#buddyToggle.off{opacity:.6}
+@media print{#buddy,#buddyToggle{display:none}}
 /* ---------- 3D showcase ---------- */
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:0 0 12px;background:var(--surface)}
 .seg[hidden]{display:none}
@@ -195,16 +204,6 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
       <a class="btn" href="#projects" data-i18n="cta_projects">See my projects</a>
       <a class="btn ghost" href="https://ma.linkedin.com/in/layla-el-hajjaji">LinkedIn</a>
       <a class="btn ghost" href="https://github.com/leeliya">GitHub</a>
-    </div>
-
-    <div class="stage reveal" id="stage">
-      <div class="canvas-wrap" id="cwrap" role="img" aria-label="A 3D avatar waving hello">
-        <canvas id="scene"></canvas>
-        <div class="labels" id="labels"></div>
-      </div>
-      <div class="stage-cap">
-        <span data-i18n="stage_cap">A small 3D avatar to welcome you. Drag it to turn it around.</span>
-      </div>
     </div>
   </div>
 
@@ -381,9 +380,6 @@ var T = {
     build_pre:"I build",
     lead:"I like the part where several pieces have to work together for real. I learn new tools quickly and I want to understand why a design works, not only that it runs.",
     cta_projects:"See my projects",
-    stage_cap:"A small 3D avatar to welcome you. Drag it to turn it around.",
-    avatar_hi:"Hello! Welcome to my portfolio",
-    stage_alt:"A 3D avatar waving hello",
     about_h:"About",
     about_1:"I am in the final year of the engineering cycle in Big Data & Cloud Computing at ENSET Mohammedia (Université Hassan II). My work covers data engineering, backend microservices, and mobile and full-stack apps.",
     about_2:"What interests me most is where software, big data and AI meet: moving data reliably, serving it through clean services, and putting models and agents on top of it. My projects range from real-time data platforms to the server behind a robotics competition.",
@@ -442,9 +438,6 @@ var T = {
     build_pre:"Je construis",
     lead:"J'aime le moment où plusieurs composants doivent vraiment fonctionner ensemble. J'apprends vite de nouveaux outils et je veux comprendre pourquoi une conception fonctionne, pas seulement qu'elle tourne.",
     cta_projects:"Voir mes projets",
-    stage_cap:"Un petit avatar 3D pour vous accueillir. Faites-le glisser pour le faire tourner.",
-    avatar_hi:"Bonjour ! Bienvenue sur mon portfolio",
-    stage_alt:"Un avatar 3D qui dit bonjour",
     about_h:"À propos",
     about_1:"Je suis en dernière année du cycle ingénieur Big Data & Cloud Computing à l'ENSET Mohammedia (Université Hassan II). Je travaille sur l'ingénierie des données, les microservices backend, et les applications mobiles et full-stack.",
     about_2:"Ce qui m'intéresse le plus, c'est la rencontre entre le logiciel, le big data et l'IA : déplacer les données de façon fiable, les exposer via des services propres, et construire des modèles et des agents par-dessus. Mes projets vont des plateformes de données temps réel au serveur d'une compétition de robotique.",
@@ -513,7 +506,6 @@ function setLang(l){
     var v = T[l][el.getAttribute("data-i18n")];
     if(v !== undefined) el.textContent = v;
   });
-  document.getElementById("cwrap").setAttribute("aria-label", T[l].stage_alt);
   document.getElementById("lang").textContent = l === "en" ? "FR" : "EN";
   showWord(); startWords();
   store("lang", l);
@@ -568,103 +560,131 @@ document.getElementById("theme").onclick = function(){
   }
 })();
 
-/* ---------- 3D avatar that waves hello (plain canvas, no library) ---------- */
+/* ---------- Anime buddy: a character that lives in the page (plain canvas, no library) ---------- */
 (function(){
-  var canvas=document.getElementById("scene"), wrap=document.getElementById("cwrap"), labelsEl=document.getElementById("labels");
-  var ctx=canvas.getContext&&canvas.getContext("2d");
-  if(!ctx){ document.getElementById("stage").style.display="none"; return; }
-  var bubble=document.createElement("span"); bubble.className="bubble"; labelsEl.appendChild(bubble);
-  function setBubble(){ bubble.textContent=(T[root.lang]||T.en).avatar_hi; }
-  var W=0,H=0,dpr=1,D=17,F=300,yaw=0,pitch=.08,vy=0,drag=false,lx=0,ly=0,idle=0,t0=0;
-  var C={}; function readColors(){ var cs=getComputedStyle(root); ["--accent","--line","--surface"].forEach(function(k){ C[k]=cs.getPropertyValue(k).trim(); }); } readColors();
+  var wrapEl=document.createElement("div"); wrapEl.id="buddy"; wrapEl.setAttribute("aria-live","polite");
+  var cv=document.createElement("canvas"), hit=document.createElement("button"), bub=document.createElement("span");
+  hit.className="hit"; hit.type="button"; bub.className="bubble";
+  wrapEl.appendChild(cv); wrapEl.appendChild(hit); wrapEl.appendChild(bub); document.body.appendChild(wrapEl);
+  var tg=document.createElement("button"); tg.id="buddyToggle"; tg.type="button"; tg.textContent="👋"; document.body.appendChild(tg);
+  var ctx=cv.getContext("2d"); if(!ctx){ wrapEl.style.display="none"; tg.style.display="none"; return; }
+  var LINES={
+    en:{hello:"Hello! Welcome to my portfolio 👋",about:"That's me, Layla! Final-year engineering student.",projects:"Here are my projects. Take a look!",showcase:"Drag the 3D scenes to see how my projects work.",skills:"Data, cloud, mobile and web: that's my stack.",education:"ENSET Mohammedia, where it all started.",contact:"I'm looking for a PFE starting February 2027. Let's talk!",click:["Hi again!","Hehe, that tickles!","Thanks for visiting!","Have a look at my projects!"],drop:"Whoa!",off:"See you!"},
+    fr:{hello:"Bonjour ! Bienvenue sur mon portfolio 👋",about:"C'est moi, Layla ! Étudiante ingénieure en dernière année.",projects:"Voici mes projets. Jetez un œil !",showcase:"Faites glisser les scènes 3D pour voir comment fonctionnent mes projets.",skills:"Data, cloud, mobile et web : voilà ma stack.",education:"L'ENSET Mohammedia, où tout a commencé.",contact:"Je cherche un PFE à partir de février 2027. Parlons-en !",click:["Re-bonjour !","Héhé, ça chatouille !","Merci de votre visite !","Regardez mes projets !"],drop:"Oh là là !",off:"À bientôt !"} };
+  function L(){ return LINES[(root.lang==="fr")?"fr":"en"]; }
+  var reduce_=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var CW=220,CH=300,GROUND=292,sc=1,VW=innerWidth,VH=innerHeight;
+  var x=-90,y=0,vy=0,dir=1,tx=0,state="walk",timer=0,ph=0,t=0,speed=0,waveT=0,talkT=0,blinkT=2,blinkK=0,jumpHappy=0,mx=-1,my=-1,drag=false,moved=0,dox=0,off=false,spoken={},lastSec=-99,hearts=[],bubT=0;
+  var AC="#0f766e",SKIN="#ffe3cf",HAIR="#2c2238",HAIR2="#6b5aa6",OUT="#2a1f2d",PANT="#3b4252";
+  function colors(){ var v=getComputedStyle(root).getPropertyValue("--accent").trim(); if(/^#[0-9a-f]{6}$/i.test(v)) AC=v; }
+  function resize(){ VW=innerWidth; VH=innerHeight; sc=VW<560?.72:(VW<900?.86:1); var d=Math.min(devicePixelRatio||1,2); cv.width=CW*d; cv.height=CH*d; ctx.setTransform(d,0,0,d,0,0);
+    hit.style.width=(70*sc)+"px"; hit.style.height=(140*sc)+"px"; hit.style.left=(-35*sc)+"px"; }
+  function speak(msg,ms){ bub.textContent=msg; bub.classList.add("on"); bubT=ms||3800; talkT=Math.min(2.2,(ms||3800)/1000); if(reduce_) draw(); }
+  function hush(){ bub.classList.remove("on"); }
+  function hop(v){ if(y<=0.5){ vy=v||520; jumpHappy=.9; } }
+  function pick(){ var a=70,b=Math.max(a+60,VW-70),n=0,nt; do{ nt=a+Math.random()*(b-a); n++; }while(Math.abs(nt-x)<140&&n<8); return nt; }
+  function go(nx){ tx=nx; state="walk"; }
+  function heart(){ for(var i=0;i<3;i++) hearts.push({x:(Math.random()-.5)*34,y:-150*sc-Math.random()*10,l:1.2+Math.random()*.4,v:30+Math.random()*20}); }
 
-  /* ---- solid primitives: {f:[{v:[[x,y,z]...],c:"#hex"}], ctr:[x,y,z]} ---- */
-  function sph(cx,cy,cz,r,c,o){ o=o||{}; var sg=o.sg||14,st=o.st||9,t0_=o.t0===undefined?0:o.t0,t1_=o.t1===undefined?Math.PI:o.t1,sy=o.sy||1,f=[],i,j;
-    function pt(i,j){ var th=t0_+(t1_-t0_)*i/st,ph=j/sg*Math.PI*2; return [cx+r*Math.sin(th)*Math.cos(ph),cy+r*sy*Math.cos(th),cz+r*Math.sin(th)*Math.sin(ph)]; }
-    for(i=0;i<st;i++) for(j=0;j<sg;j++) f.push({v:[pt(i,j),pt(i,j+1),pt(i+1,j+1),pt(i+1,j)],c:c});
-    return {f:f,ctr:[cx,cy,cz]}; }
-  function box(cx,cy,cz,w,h,d,c){ var x0=cx-w/2,x1=cx+w/2,y0=cy-h/2,y1=cy+h/2,z0=cz-d/2,z1=cz+d/2;
-    return {f:[{v:[[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]],c:c},{v:[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],c:c},{v:[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]],c:c},
-      {v:[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],c:c},{v:[[x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0]],c:c},{v:[[x1,y0,z0],[x1,y0,z1],[x1,y1,z1],[x1,y1,z0]],c:c}],ctr:[cx,cy,cz]}; }
-  function tube(a,b,r0,r1,n,c){ var d=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],L=Math.sqrt(d[0]*d[0]+d[1]*d[1]+d[2]*d[2]);d=[d[0]/L,d[1]/L,d[2]/L];
-    var h=Math.abs(d[0])<.9?[1,0,0]:[0,1,0],u=[d[1]*h[2]-d[2]*h[1],d[2]*h[0]-d[0]*h[2],d[0]*h[1]-d[1]*h[0]],ul=Math.sqrt(u[0]*u[0]+u[1]*u[1]+u[2]*u[2]);u=[u[0]/ul,u[1]/ul,u[2]/ul];
-    var v=[d[1]*u[2]-d[2]*u[1],d[2]*u[0]-d[0]*u[2],d[0]*u[1]-d[1]*u[0]],A=[],B=[],f=[],i;
-    for(i=0;i<n;i++){ var q=i/n*Math.PI*2,cs=Math.cos(q),sn=Math.sin(q);
-      A.push([a[0]+r0*(u[0]*cs+v[0]*sn),a[1]+r0*(u[1]*cs+v[1]*sn),a[2]+r0*(u[2]*cs+v[2]*sn)]); B.push([b[0]+r1*(u[0]*cs+v[0]*sn),b[1]+r1*(u[1]*cs+v[1]*sn),b[2]+r1*(u[2]*cs+v[2]*sn)]); }
-    for(i=0;i<n;i++) f.push({v:[A[i],A[(i+1)%n],B[(i+1)%n],B[i]],c:c}); f.push({v:A,c:c}); f.push({v:B.slice(),c:c});
-    return {f:f,ctr:[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2]}; }
-  function ring(cx,cy,cz,r,t,c,ax){ return tube(ax==="x"?[cx-t/2,cy,cz]:[cx,cy-t/2,cz],ax==="x"?[cx+t/2,cy,cz]:[cx,cy+t/2,cz],r,r,16,c); }
-
-  var SKIN="#d9a77f",HAIR="#2b2118",HOOD="#0f766e",HOOD2="#0b5f58",PANT="#374151",SHOE="#f3f4f6";
-  function build(t){
-    var S=[],bob=Math.sin(t*2)*.05,w=Math.sin(t*7)*.55;
-    S.push(tube([0,-3.15+.0,0],[0,-3,0],2.5,2.5,36,"#e5e7eb"));                                   /* platform */
-    /* legs and shoes */
-    S.push(tube([-.42,-1.2+bob,0],[-.42,-2.85,0],.34,.3,12,PANT)); S.push(tube([.42,-1.2+bob,0],[.42,-2.85,0],.34,.3,12,PANT));
-    S.push(box(-.42,-2.95,-.2,.7,.25,1.05,SHOE)); S.push(box(.42,-2.95,-.2,.7,.25,1.05,SHOE));
-    /* torso, hood, pocket */
-    S.push(tube([0,-1.35+bob,0],[0,.75+bob,0],.98,.8,24,HOOD)); S.push(sph(0,.75+bob,0,.8,HOOD,{t1:Math.PI/2,sy:.35,sg:20,st:4}));
-    S.push(box(0,-.55+bob,-.93,1.1,.38,.1,HOOD2));
-    /* neck and head */
-    S.push(tube([0,.8+bob,0],[0,1.1+bob,0],.26,.26,10,SKIN));
-    var hy=1.75+bob,hyaw=Math.sin(t*1.3)*.08;
-    S.push(sph(0,hy,0,.88,SKIN,{sg:18,st:12}));
-    S.push(sph(0,hy+.08,.06,.93,HAIR,{t0:0,t1:Math.PI*.62,sg:18,st:8}));                              /* hair cap */
-    S.push(sph(-.36+hyaw,hy+.02,-.8,.1,"#1f2937",{sg:8,st:6})); S.push(sph(.36+hyaw,hy+.02,-.8,.1,"#1f2937",{sg:8,st:6}));
-    S.push(sph(-.36+hyaw+.03,hy+.05,-.88,.035,"#ffffff",{sg:6,st:4})); S.push(sph(.36+hyaw+.03,hy+.05,-.88,.035,"#ffffff",{sg:6,st:4}));
-    S.push(sph(-.58,hy-.25,-.62,.14,"#f4a6a0",{sg:8,st:5,sy:.7})); S.push(sph(.58,hy-.25,-.62,.14,"#f4a6a0",{sg:8,st:5,sy:.7}));
-    [[-.3,.0],[-.16,-.08],[0,-.11],[.16,-.08],[.3,.0]].forEach(function(m){ S.push(box(m[0]+hyaw,hy-.38+m[1],-.84,.1,.06,.05,"#8b2f2f")); });   /* smile */
-    /* relaxed arm (avatar's left) */
-    S.push(tube([-1.0,.4+bob,0],[-1.28,-.55+bob,-.05],.26,.22,12,HOOD)); S.push(tube([-1.28,-.55+bob,-.05],[-1.3,-1.25+bob,-.1],.22,.2,12,HOOD)); S.push(sph(-1.3,-1.4+bob,-.1,.22,SKIN,{sg:10,st:7}));
-    /* waving arm (avatar's right): forearm swings around the elbow */
-    var sh=[1.0,.4+bob,0],el=[1.62,.95+bob,-.15],L=1.1,a=w,hand=[el[0]+L*Math.sin(a)*.8+.1,el[1]+L*Math.cos(a)*.95,el[2]-.1];
-    S.push(tube(sh,el,.26,.22,12,HOOD)); S.push(sph(el[0],el[1],el[2],.23,HOOD,{sg:10,st:7})); S.push(tube(el,[hand[0],hand[1]-.18,hand[2]],.22,.2,12,HOOD));
-    S.push(sph(hand[0],hand[1],hand[2],.3,SKIN,{sg:12,st:8})); [-.2,-.07,.07,.2].forEach(function(dx){ S.push(tube([hand[0]+dx*.9,hand[1]+.15,hand[2]],[hand[0]+dx*1.15,hand[1]+.5,hand[2]],.06,.05,6,SKIN)); });
-    /* floating symbols of my domain, orbiting */
-    var o=[{c:"#f5c400",k:0},{c:"#e6526f",k:1},{c:"#0194e2",k:2},{c:"#7c3aed",k:3}];
-    o.forEach(function(m){ var an=t*.6+m.k*Math.PI/2,x=Math.cos(an)*3.5,z=Math.sin(an)*2.4,y=.5+Math.sin(t*1.4+m.k)*.35;
-      if(m.k===0){ S.push(tube([x,y-.22,z],[x,y+.22,z],.3,.3,14,m.c)); }
-      if(m.k===1){ S.push(tube([x,y-.18,z],[x,y+.18,z],.34,.34,6,m.c)); }
-      if(m.k===2){ S.push(box(x,y,z,.5,.5,.5,m.c)); }
-      if(m.k===3){ S.push(sph(x,y,z,.3,m.c,{sg:10,st:7})); } });
-    return S;
+  /* ---- drawing, in character space: feet at (0,0), facing +x, ~150 units tall ---- */
+  function rr(a,b,w,h,r){ ctx.beginPath(); ctx.moveTo(a+r,b); ctx.arcTo(a+w,b,a+w,b+h,r); ctx.arcTo(a+w,b+h,a,b+h,r); ctx.arcTo(a,b+h,a,b,r); ctx.arcTo(a,b,a+w,b,r); ctx.closePath(); }
+  function limb(x0,y0,x1,y1,w,c){ ctx.lineCap="round"; ctx.strokeStyle=OUT; ctx.lineWidth=w+3; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.strokeStyle=c; ctx.lineWidth=w; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); }
+  function eye(sx,ey,look,happy,open){
+    if(happy){ ctx.strokeStyle=OUT; ctx.lineWidth=3; ctx.lineCap="round"; ctx.beginPath(); ctx.arc(sx,ey+3,6.5,Math.PI*1.1,Math.PI*1.9); ctx.stroke(); return; }
+    if(open<.18){ ctx.strokeStyle=OUT; ctx.lineWidth=3; ctx.lineCap="round"; ctx.beginPath(); ctx.moveTo(sx-7,ey+2); ctx.quadraticCurveTo(sx,ey+5,sx+7,ey+2); ctx.stroke(); return; }
+    var ry=10.5*open; ctx.fillStyle="#fff"; ctx.beginPath(); ctx.ellipse(sx,ey,8,ry,0,0,7); ctx.fill();
+    var g=ctx.createLinearGradient(0,ey-ry,0,ey+ry); g.addColorStop(0,"#1f2a44"); g.addColorStop(.55,AC); g.addColorStop(1,"#7fe3d4");
+    ctx.save(); ctx.beginPath(); ctx.ellipse(sx,ey,8,ry,0,0,7); ctx.clip();
+    ctx.fillStyle=g; ctx.beginPath(); ctx.ellipse(sx+look[0],ey+look[1],6.4,ry*.92,0,0,7); ctx.fill();
+    ctx.fillStyle="#10141f"; ctx.beginPath(); ctx.ellipse(sx+look[0],ey+look[1],3.1,4.6*open,0,0,7); ctx.fill(); ctx.restore();
+    ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(sx+look[0]-2.4,ey+look[1]-3.6*open,2.5,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(sx+look[0]+2.4,ey+look[1]+3,1.2,0,7); ctx.fill();
+    ctx.strokeStyle=OUT; ctx.lineWidth=2.6; ctx.lineCap="round"; ctx.beginPath(); ctx.ellipse(sx,ey,8,ry,0,Math.PI*1.05,Math.PI*1.95); ctx.stroke(); }
+  function draw(){
+    ctx.clearRect(0,0,CW,CH); var gy=GROUND-y*1, mv=state==="walk"&&!drag?1:0, bob=mv?Math.abs(Math.sin(ph))*3:Math.sin(t*2)*1.2;
+    /* shadow stays on the ground */
+    ctx.save(); ctx.translate(CW/2,GROUND+0); var sh=Math.max(.45,1-y/180); ctx.fillStyle="rgba(0,0,0,.18)"; ctx.beginPath(); ctx.ellipse(0,0,30*sc*sh,6*sc*sh,0,0,7); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.translate(CW/2,gy); ctx.scale(sc*dir,sc); ctx.lineJoin="round";
+    var squash=y<=0.5&&jumpHappy>.5?1:0; if(squash) ctx.scale(1.05,.96);
+    var happy=waveT>0||jumpHappy>0||drag, mouthOpen=talkT>0;
+    /* ponytail */
+    var sw=Math.sin(t*3)*5+(mv?Math.sin(ph*2)*6:0)-(y>0?6:0);
+    ctx.strokeStyle=OUT; ctx.lineWidth=19; ctx.lineCap="round"; ctx.beginPath(); ctx.moveTo(-18,-136); ctx.quadraticCurveTo(-46+sw,-128,-40+sw*1.4,-92); ctx.stroke();
+    ctx.strokeStyle=HAIR; ctx.lineWidth=15; ctx.beginPath(); ctx.moveTo(-18,-136); ctx.quadraticCurveTo(-46+sw,-128,-40+sw*1.4,-92); ctx.stroke();
+    ctx.strokeStyle=HAIR2; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-26,-134); ctx.quadraticCurveTo(-45+sw,-124,-40+sw*1.3,-104); ctx.stroke();
+    /* legs */
+    for(var k=0;k<2;k++){ var side=k?1:-1, a=mv?Math.sin(ph+(k?0:Math.PI))*.6:(y>0.5?(k?.35:-.25):0), hx=side*7, hy=-38+bob, fx=hx+Math.sin(a)*32, fy=hy+Math.cos(a)*(y>0.5?27:33);
+      limb(hx,hy,fx,fy,10,PANT); ctx.fillStyle="#f8fafc"; ctx.strokeStyle=OUT; ctx.lineWidth=2.4; ctx.beginPath(); ctx.ellipse(fx+4,fy+1.5,9,5.5,0,0,7); ctx.fill(); ctx.stroke(); }
+    /* hoodie */
+    ctx.fillStyle=AC; ctx.strokeStyle=OUT; ctx.lineWidth=3; rr(-21,-88+bob,42,50,13); ctx.fill(); ctx.stroke();
+    ctx.fillStyle="rgba(0,0,0,.14)"; rr(-12,-62+bob,24,13,5); ctx.fill();
+    ctx.strokeStyle="#fff"; ctx.lineWidth=2; ctx.lineCap="round"; ctx.beginPath(); ctx.moveTo(-5,-86+bob); ctx.lineTo(-6,-72+bob); ctx.moveTo(5,-86+bob); ctx.lineTo(6,-72+bob); ctx.stroke();
+    /* arms */
+    var sy0=-80+bob;
+    var a2=mv?-Math.sin(ph)*.65:Math.sin(t*2)*.05; limb(-19,sy0,-19+Math.sin(a2)*30-3,sy0+Math.cos(a2)*26,9,AC); ctx.fillStyle=SKIN; ctx.strokeStyle=OUT; ctx.lineWidth=2.4; ctx.beginPath(); ctx.arc(-22+Math.sin(a2)*30,sy0+Math.cos(a2)*27,5.4,0,7); ctx.fill(); ctx.stroke();
+    var ex,ey,hx2,hy2;
+    if(waveT>0||drag||y>0.5){ ex=32; ey=sy0-8; hx2=38+(drag?0:Math.sin(t*14)*8); hy2=sy0-34-(y>0.5?4:0); }
+    else { var a3=mv?Math.sin(ph)*.65:Math.sin(t*2+1)*.05; ex=19+Math.sin(a3)*14; ey=sy0+Math.cos(a3)*13; hx2=19+Math.sin(a3)*30+3; hy2=sy0+Math.cos(a3)*27; }
+    limb(19,sy0,ex,ey,9,AC); limb(ex,ey,hx2,hy2,9,AC); ctx.fillStyle=SKIN; ctx.strokeStyle=OUT; ctx.lineWidth=2.4; ctx.beginPath(); ctx.arc(hx2,hy2,6,0,7); ctx.fill(); ctx.stroke();
+    /* head */
+    var hyc=-118+bob*.6, tilt=Math.sin(t*1.5)*.03+(mv?Math.sin(ph*2)*.02:0);
+    ctx.save(); ctx.translate(0,hyc); ctx.rotate(tilt);
+    ctx.fillStyle=HAIR; ctx.strokeStyle=OUT; ctx.lineWidth=3; ctx.beginPath(); ctx.ellipse(0,-5,31,30,0,0,7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle=SKIN; ctx.beginPath(); ctx.ellipse(0,2,28,26,0,0,7); ctx.fill(); ctx.stroke();
+    var lx=Math.max(-1,Math.min(1,(mx-(CW/2-CW/2+x))/260)), ly=Math.max(-1,Math.min(1,(my-(VH-100))/260)); if(mx<0){ lx=0; ly=0; }
+    var look=[lx*2.4*dir,ly*2.2], op=blinkK>0?1-Math.sin(blinkK*Math.PI):1;
+    eye(-11,-2,look,happy,op); eye(11,-2,look,happy,op);
+    ctx.fillStyle="rgba(255,120,130,.38)"; ctx.beginPath(); ctx.ellipse(-18,10,5.5,3.2,0,0,7); ctx.fill(); ctx.beginPath(); ctx.ellipse(18,10,5.5,3.2,0,0,7); ctx.fill();
+    if(mouthOpen||happy){ ctx.fillStyle="#9c3a3a"; ctx.beginPath(); ctx.ellipse(0,15,3.6,(mouthOpen?2.4+1.8*Math.abs(Math.sin(t*11)):3.2),0,0,7); ctx.fill(); }
+    else { ctx.strokeStyle=OUT; ctx.lineWidth=2; ctx.lineCap="round"; ctx.beginPath(); ctx.arc(0,12.5,3.6,.2,Math.PI-.2); ctx.stroke(); }
+    /* bangs + side locks */
+    ctx.fillStyle=HAIR; ctx.strokeStyle=OUT; ctx.lineWidth=3; ctx.beginPath();
+    ctx.moveTo(-30,-3); ctx.quadraticCurveTo(-33,-36,0,-34); ctx.quadraticCurveTo(33,-36,30,-3); ctx.quadraticCurveTo(25,-16,16,-9); ctx.quadraticCurveTo(10,-22,3,-8); ctx.quadraticCurveTo(-4,-23,-11,-9); ctx.quadraticCurveTo(-21,-16,-30,-3); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle=HAIR; ctx.beginPath(); ctx.ellipse(-29,10,4.6,15,.08,0,7); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.ellipse(29,10,4.6,15,-.08,0,7); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle=HAIR2; ctx.lineWidth=3; ctx.lineCap="round"; ctx.beginPath(); ctx.arc(-6,-22,14,Math.PI*1.1,Math.PI*1.55); ctx.stroke();
+    ctx.fillStyle=AC; ctx.strokeStyle=OUT; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(-19,-27,4.6,0,7); ctx.fill(); ctx.stroke();   /* hair clip */
+    ctx.restore(); ctx.restore();
+    ctx.font="16px system-ui,sans-serif"; ctx.textAlign="center"; hearts.forEach(function(h){ ctx.globalAlpha=Math.max(0,Math.min(1,h.l)); ctx.fillStyle="#ef5b7a"; ctx.fillText("♥",CW/2+h.x,gy+h.y+0); }); ctx.globalAlpha=1;
   }
-  var HC={}; function shade(c,k){ var h=HC[c]; if(!h){ h=HC[c]=[parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)]; } k=Math.min(1.12,k); return "rgb("+(h[0]*k|0)+","+(h[1]*k|0)+","+(h[2]*k|0)+")"; }
-  function proj(p){ var cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
-    var x1=cy*p[0]+sy*p[2],z1=-sy*p[0]+cy*p[2],y2=cp*p[1]+sp*z1,z2=-sp*p[1]+cp*z1,zz=z2+D,k=F/zz;
-    return {x:W/2+x1*k,y:H/2-(y2-.2)*k,k:k,vx:x1,vy:y2,vz:z2}; }
-  function draw(t){
-    ctx.clearRect(0,0,W,H); var S=build(t),items=[],Ls=[-.35,.65,-.67];
-    S.forEach(function(so){ var cv=proj(so.ctr);
-      so.f.forEach(function(f){ var P=f.v.map(proj),n=P.length,ax=P[1].vx-P[0].vx,ay=P[1].vy-P[0].vy,az=P[1].vz-P[0].vz,bx=P[2].vx-P[0].vx,by=P[2].vy-P[0].vy,bz=P[2].vz-P[0].vz;
-        var nx=ay*bz-az*by,ny=az*bx-ax*bz,nz=ax*by-ay*bx,cx=0,cy=0,cz=0,i;
-        for(i=0;i<n;i++){ cx+=P[i].vx; cy+=P[i].vy; cz+=P[i].vz; } cx/=n; cy/=n; cz/=n;
-        if(nx*(cx-cv.vx)+ny*(cy-cv.vy)+nz*(cz-cv.vz)<0){ nx=-nx; ny=-ny; nz=-nz; }
-        if(nz>0) return;
-        var nl=Math.sqrt(nx*nx+ny*ny+nz*nz)||1,lit=(nx*Ls[0]+ny*Ls[1]+nz*Ls[2])/nl;
-        items.push({d:cz,P:P,c:shade(f.c,.55+.5*Math.max(0,lit))}); }); });
-    items.sort(function(a,b){ return b.d-a.d; });
-    items.forEach(function(it){ ctx.beginPath(); it.P.forEach(function(q,i){ i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y); }); ctx.closePath(); ctx.fillStyle=it.c; ctx.fill(); ctx.strokeStyle=it.c; ctx.lineWidth=.7; ctx.stroke(); });
-    var q=proj([-2.6,3.4,0]); var hw=bubble.offsetWidth/2+8; bubble.style.left=Math.max(hw,Math.min(W-hw,q.x))+"px"; bubble.style.top=Math.max(34,q.y)+"px";
+  function place(){ wrapEl.style.transform="translateX("+x.toFixed(1)+"px)"; hit.style.bottom=(6+y)+"px";
+    var hw=bub.offsetWidth/2+10, cl=Math.max(hw,Math.min(VW-hw,x)), bx=cl-x; bub.style.setProperty("--bx",bx+"px"); bub.style.bottom=(8+y+156*sc)+"px"; }
+  function step(dt){
+    t+=dt; if(talkT>0) talkT-=dt; if(waveT>0) waveT-=dt; if(jumpHappy>0) jumpHappy-=dt;
+    if(bubT>0){ bubT-=dt*1000; if(bubT<=0) hush(); }
+    blinkT-=dt; if(blinkT<=0){ blinkK=.001; blinkT=2+Math.random()*3.5; } if(blinkK>0){ blinkK+=dt*8; if(blinkK>1) blinkK=0; }
+    hearts.forEach(function(h){ h.l-=dt; h.y-=h.v*dt; }); hearts=hearts.filter(function(h){ return h.l>0; });
+    if(y>0||vy>0){ if(!drag){ vy-=1800*dt; y+=vy*dt; if(y<=0){ y=0; vy=0; } } }
+    if(drag){ speed=0; return; }
+    if(state==="walk"){ var d=tx-x; if(Math.abs(d)<4){ state="idle"; timer=1.2+Math.random()*2.2; speed=0; if(introPending){ introPending=false; waveT=3.4; speak(L().hello,4800); } }
+      else { dir=d>0?1:-1; speed=Math.min(90,Math.abs(d)*3+20); x+=dir*speed*dt; ph+=speed*dt*.085; } }
+    else { speed=0; timer-=dt; if(timer<=0&&!introPending){ if(Math.random()<.3) hop(500); go(pick()); } }
   }
-  function resize(){ var r=wrap.getBoundingClientRect(); dpr=Math.min(window.devicePixelRatio||1,2); W=r.width; H=r.height; canvas.width=W*dpr; canvas.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); F=Math.min(H*D/7.4,W*D/9.5); }
-  var reduce_=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches,raf=0,running=false,vis=true,last=0;
-  function tick(now){ if(!running) return; var dt=Math.min(.05,(now-last)/1000||.016); last=now; t0+=dt;
-    if(!drag){ idle+=dt; if(Math.abs(vy)>.0005){ yaw+=vy; vy*=.94; } else { yaw+=(Math.sin(t0*.7)*.35-yaw)*Math.min(1,dt*1.5); } }
-    draw(t0); raf=requestAnimationFrame(tick); }
-  function start(){ if(reduce_||running||!vis) return; running=true; last=performance.now(); raf=requestAnimationFrame(tick); }
+  var introPending=true,last=0,raf=0,running=false;
+  function tick(now){ if(!running) return; var dt=Math.min(.05,(now-last)/1000||.016); last=now; step(dt); draw(); place(); raf=requestAnimationFrame(tick); }
+  function start(){ if(reduce_||running||off||document.hidden) return; running=true; last=performance.now(); raf=requestAnimationFrame(tick); }
   function stop(){ running=false; cancelAnimationFrame(raf); }
-  wrap.style.cursor="grab"; wrap.style.touchAction="pan-y";
-  wrap.addEventListener("pointerdown",function(e){ drag=true; idle=0; lx=e.clientX; ly=e.clientY; wrap.style.cursor="grabbing"; try{wrap.setPointerCapture(e.pointerId);}catch(_){} });
-  wrap.addEventListener("pointermove",function(e){ if(!drag) return; var dx=e.clientX-lx,dy=e.clientY-ly; lx=e.clientX; ly=e.clientY; yaw+=dx*.01; vy=dx*.01; pitch=Math.max(-.3,Math.min(.7,pitch+dy*.004)); if(reduce_) draw(t0); });
-  function up(){ drag=false; wrap.style.cursor="grab"; }
-  wrap.addEventListener("pointerup",up); wrap.addEventListener("pointercancel",up);
-  window.addEventListener("resize",function(){ resize(); draw(t0); });
-  new IntersectionObserver(function(en){ vis=en[0].isIntersecting; vis?start():stop(); }).observe(wrap);
+
+  /* click, drag and drop */
+  hit.setAttribute("aria-label","Say hi to the avatar"); var lastDown=0;
+  hit.addEventListener("pointerdown",function(e){ drag=true; moved=0; dox=x-e.clientX; try{hit.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); });
+  hit.addEventListener("pointermove",function(e){ if(!drag) return; moved+=Math.abs(e.movementX||0)+Math.abs(e.movementY||0); if(moved>6){ x=Math.max(30,Math.min(VW-30,e.clientX+dox)); y=Math.max(0,Math.min(150,VH-e.clientY-70*sc)); vy=0; state="idle"; timer=2; if(reduce_){ draw(); place(); } } });
+  function release(){ if(!drag) return; drag=false; if(moved<=6){ var c=L().click; waveT=2; hop(480); heart(); speak(c[Math.floor(Math.random()*c.length)],2600); } else if(y>6){ speak(L().drop,1800); } if(reduce_){ y=0; draw(); place(); } }
+  hit.addEventListener("pointerup",release); hit.addEventListener("pointercancel",release);
+  hit.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); var c=L().click; waveT=2; hop(480); heart(); speak(c[Math.floor(Math.random()*c.length)],2600); } });
+  window.addEventListener("pointermove",function(e){ mx=e.clientX; my=e.clientY; });
+
+  /* she reacts to the section you scroll to */
+  if("IntersectionObserver" in window){ var io=new IntersectionObserver(function(en){ en.forEach(function(e){ var id=e.target.id; if(!e.isIntersecting||spoken[id]||off||drag) return; var now=performance.now(); if(introPending||now-lastSec<7000) return; var m=L()[id]; if(!m) return; spoken[id]=1; lastSec=now; speak(m,4600); waveT=1.6; if(!reduce_) hop(460); }); },{threshold:.12,rootMargin:"0px 0px -25% 0px"});
+    ["about","projects","showcase","skills","education","contact"].forEach(function(id){ var el=document.getElementById(id); if(el) io.observe(el); }); }
+
+  /* show / hide */
+  tg.setAttribute("aria-label","Hide or show the avatar"); tg.setAttribute("aria-pressed","true");
+  tg.addEventListener("click",function(){ off=!off; wrapEl.style.display=off?"none":""; tg.setAttribute("aria-pressed",off?"false":"true"); tg.classList.toggle("off",off); if(off) stop(); else { start(); if(reduce_){ draw(); place(); } } });
+  window.addEventListener("resize",function(){ resize(); if(x>VW-30) x=VW-60; draw(); place(); });
   document.addEventListener("visibilitychange",function(){ document.hidden?stop():start(); });
-  window.__sceneTheme=function(){ readColors(); setBubble(); draw(t0); };
-  document.getElementById("lang").addEventListener("click",function(){ setTimeout(setBubble,0); });
-  setBubble(); resize(); t0=reduce_?1.9:0; draw(t0); start();
+  var oldT=window.__sceneTheme; window.__sceneTheme=function(){ if(oldT) oldT(); colors(); draw(); };
+  colors(); resize();
+  if(reduce_){ x=Math.max(80,Math.min(180,VW*.14)); state="idle"; introPending=false; draw(); place(); setTimeout(function(){ speak(L().hello,6000); },500); }
+  else { x=-90; setTimeout(function(){ tx=Math.max(80,Math.min(200,VW*.16)); state="walk"; start(); },500); draw(); place(); }
 })();
 
 /* ---------- 3D showcase: tabs, drag to rotate ---------- */
