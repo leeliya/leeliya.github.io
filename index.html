@@ -134,8 +134,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--muted);f
 .sw.ring{box-shadow:0 0 0 2px #f59e0b;margin:0 2px}
 .sw.line{width:20px;height:4px;border-radius:2px;border:0}
 .sw.blk{width:14px;height:14px;border-radius:4px}
-#buddy{position:fixed;left:0;bottom:0;width:0;height:300px;z-index:60;pointer-events:none}
-#buddy canvas{position:absolute;left:-110px;bottom:0;width:220px;height:300px;pointer-events:none}
+#buddy{position:fixed;left:0;bottom:0;width:0;height:520px;z-index:60;pointer-events:none}
+#buddy canvas{position:absolute;left:-110px;bottom:0;width:220px;height:520px;pointer-events:none}
 #buddy .hit{position:absolute;bottom:6px;background:none;border:0;padding:0;border-radius:30px;pointer-events:auto;cursor:grab;touch-action:none}
 #buddy .hit:active{cursor:grabbing}
 #buddy .hit:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -573,7 +573,7 @@ document.getElementById("theme").onclick = function(){
     fr:{hello:"Bonjour ! Bienvenue sur mon portfolio 👋",about:"C'est moi, Layla ! Étudiante ingénieure en dernière année.",projects:"Voici mes projets. Jetez un œil !",showcase:"Faites glisser les scènes 3D pour voir comment fonctionnent mes projets.",skills:"Data, cloud, mobile et web : voilà ma stack.",education:"L'ENSET Mohammedia, où tout a commencé.",contact:"Je cherche un PFE à partir de février 2027. Parlons-en !",click:["Re-bonjour !","Héhé, ça chatouille !","Merci de votre visite !","Regardez mes projets !"],drop:"Oh là là !",off:"À bientôt !"} };
   function L(){ return LINES[(root.lang==="fr")?"fr":"en"]; }
   var reduce_=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var CW=220,CH=300,GROUND=292,sc=1,VW=innerWidth,VH=innerHeight;
+  var CW=220,CH=520,GROUND=512,sc=1,VW=innerWidth,VH=innerHeight;
   var x=-90,y=0,vy=0,dir=1,tx=0,state="idle",timer=0,al=0,tm=0,nextX=0,sparks=[],t=0,waveT=0,talkT=0,blinkT=2,blinkK=0,jumpHappy=0,mx=-1,my=-1,drag=false,moved=0,dox=0,off=false,spoken={},lastSec=-99,hearts=[],bubT=0;
   var AC="#0f766e";
   function colors(){ var v=getComputedStyle(root).getPropertyValue("--accent").trim(); if(/^#[0-9a-f]{6}$/i.test(v)) AC=v; }
@@ -640,7 +640,7 @@ document.getElementById("theme").onclick = function(){
   /* click, drag and drop */
   var hov=false; hit.addEventListener("pointerenter",function(){ hov=true; }); hit.addEventListener("pointerleave",function(){ hov=false; }); hit.setAttribute("aria-label","Say hi to the avatar"); var lastDown=0;
   hit.addEventListener("pointerdown",function(e){ drag=true; moved=0; dox=x-e.clientX; try{hit.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); });
-  hit.addEventListener("pointermove",function(e){ if(!drag) return; moved+=Math.abs(e.movementX||0)+Math.abs(e.movementY||0); if(moved>6){ x=Math.max(30,Math.min(VW-30,e.clientX+dox)); y=Math.max(0,Math.min(150,VH-e.clientY-70*sc)); vy=0; state="idle"; al=1; timer=40; if(reduce_){ draw(); place(); } } });
+  hit.addEventListener("pointermove",function(e){ if(!drag) return; moved+=Math.abs(e.movementX||0)+Math.abs(e.movementY||0); if(moved>6){ x=Math.max(30,Math.min(VW-30,e.clientX+dox)); y=Math.max(0,Math.min(Math.min(330,VH-180*sc-70),VH-e.clientY-70*sc)); vy=0; state="idle"; al=1; timer=40; if(reduce_){ draw(); place(); } } });
   function release(){ if(!drag) return; drag=false; timer=moved>6?40:14; if(moved<=6){ var c=L().click; waveT=2; hop(480); heart(); speak(c[Math.floor(Math.random()*c.length)],2600); } else if(y>6){ speak(L().drop,1800); } if(reduce_){ y=0; draw(); place(); } }
   hit.addEventListener("pointerup",release); hit.addEventListener("pointercancel",release);
   hit.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); var c=L().click; waveT=2; hop(480); heart(); speak(c[Math.floor(Math.random()*c.length)],2600); } });
